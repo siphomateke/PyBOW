@@ -55,28 +55,25 @@ def get_bow_features(matcher, descriptors, dictionary_size):
 
 
 dictionary_size = 512
-imgs_path = "train\pos"
-# test_img = "[name of image to compare descriptors for]"
-test_img = "Achaea lienardi, Noctuidae, Catocalinae M-2006-084.jpg"
+imgs_path = "train\pos"  # directory of images
+test_img = "moth1.jpg"  # name of image to compare descriptors for
 
 print("Loading images...")
 imgs_data = []
-imgs = []
 img_files = imutils.imreads(imgs_path)
 for img_file in img_files:
     imgs_data.append(ImageData(dictionary_size, 0))
-    imgs.append(img_file)
 
 # Resizes images to a fixed width
-imutils.resize_img_files(imgs, 320)
+imutils.resize_img_files(img_files, 320)
 # Converts images to their grayscale equivalent
-[img_file.to_gray() for img_file in imgs]
+[img_file.to_gray() for img_file in img_files]
 
 print("Extracting descriptors...")
 start = cv2.getTickCount()
 detector, matcher = get_detector_matcher()
-# descriptor_imgs is a list which says what the id of each descriptors image is in all_imgs
-desc, desc_src_img = get_batch_descriptors(imgs, detector)
+# desc_src_img is a list which says which image a descriptor belongs to
+desc, desc_src_img = get_batch_descriptors(img_files, detector)
 print("Time elapsed: {}s".format(get_elapsed_time(start)))
 
 print("Clustering...")
@@ -96,14 +93,14 @@ for i in xrange(size):
     data.bow_features[label] += 1
 print("Time elapsed: {}s".format(get_elapsed_time(start)))
 
-for data, img_file in zip(imgs_data, imgs):
+for data, img_file in zip(imgs_data, img_files):
     if img_file.name == test_img:
         print data.bow_features.ravel()
 
 matcher.add(dictionary)
 matcher.train()
 
-for img_file in imgs:
+for img_file in img_files:
     if img_file.name == test_img:
         descriptors = get_descriptors(img_file.img, detector)
         result = get_bow_features(matcher, descriptors, dictionary_size)
