@@ -18,7 +18,6 @@ def imreads(path):
 
 
 imgs_path = "train\pos"  # directory of images
-test_img = "img1.jpg"  # name of image to compare descriptors for
 
 dictionary_size = 512
 # Loading images
