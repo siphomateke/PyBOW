@@ -1,107 +1,101 @@
+import os
+
 import cv2
 import numpy as np
-
-import imutils
-
-
-def get_elapsed_time(start):
-    """ Helper function for timing code execution"""
-    return (cv2.getTickCount() - start) / cv2.getTickFrequency()
+from matplotlib import pyplot as plt
 
 
-def get_detector_matcher():
-    detector = cv2.AKAZE_create()
-    matcher = cv2.FlannBasedMatcher_create()
-    return detector, matcher
+def imreads(path):
+    """
+    This reads all the images in a given folder and returns the results
+    """
+    images_path = [os.path.join(path, f) for f in os.listdir(path)]
+    images = []
+    for image_path in images_path:
+        img = cv2.imread(image_path)
+        images.append(img)
+    return images
+
+
+imgs_path = "train\pos"  # directory of images
+test_img = "img1.jpg"  # name of image to compare descriptors for
+
+dictionary_size = 512
+# Loading images
+imgs_data = []
+# imreads returns a list of all images in that directory
+imgs = imreads(imgs_path)
+for i in xrange(len(imgs)):
+    # create a numpy to hold the histogram for each image
+    imgs_data.insert(i, np.zeros((dictionary_size, 1)))
 
 
 def get_descriptors(img, detector):
+    # returns descriptors of an image
     return detector.detectAndCompute(img, None)[1]
 
 
-def get_batch_descriptors(img_files, detector):
-    desc = np.array([])
-    descriptor_src_img = []
-    for i in xrange(len(img_files)):
-        img = img_files[i].img
-        descriptors = get_descriptors(img, detector)
-        if len(desc) == 0:
-            desc = np.array(descriptors)
-        else:
-            desc = np.vstack((desc, descriptors))
-        # Keep track of which image a descriptor belongs to
-        for j in range(len(descriptors)):
-            descriptor_src_img.append(i)
-    # important, cv2.kmeans only accepts type32 descriptors
-    desc = np.float32(desc)
-    return desc, descriptor_src_img
+# Extracting descriptors
+detector = cv2.AKAZE_create()
 
-
-class ImageData(object):
-    """ Used to store an images bag of words """
-    def __init__(self, size, class_name):
-        self.bow_features = np.zeros((size, 1))
-        self.class_name = class_name
-
-
-def get_bow_features(matcher, descriptors, dictionary_size):
-    output = np.zeros((dictionary_size, 1), np.float32)
-    # flan matcher needs descriptors to be type32
-    matches = matcher.match(np.float32(descriptors))
-    for match in matches:
-        visual_word = match.trainIdx
-        output[visual_word] += 1
-    return output
-
-
-dictionary_size = 512
-imgs_path = "train\pos"  # directory of images
-test_img = "moth1.jpg"  # name of image to compare descriptors for
-
-print("Loading images...")
-imgs_data = []
-img_files = imutils.imreads(imgs_path)
-for img_file in img_files:
-    imgs_data.append(ImageData(dictionary_size, 0))
-
-# Resizes images to a fixed width
-imutils.resize_img_files(img_files, 320)
-# Converts images to their grayscale equivalent
-[img_file.to_gray() for img_file in img_files]
-
-print("Extracting descriptors...")
-start = cv2.getTickCount()
-detector, matcher = get_detector_matcher()
+desc = np.array([])
 # desc_src_img is a list which says which image a descriptor belongs to
-desc, desc_src_img = get_batch_descriptors(img_files, detector)
-print("Time elapsed: {}s".format(get_elapsed_time(start)))
+desc_src_img = []
+for i in xrange(len(imgs)):
+    img = imgs[i]
+    descriptors = get_descriptors(img, detector)
+    if len(desc) == 0:
+        desc = np.array(descriptors)
+    else:
+        desc = np.vstack((desc, descriptors))
+    # Keep track of which image a descriptor belongs to
+    for j in range(len(descriptors)):
+        desc_src_img.append(i)
+# important, cv2.kmeans only accepts type32 descriptors
+desc = np.float32(desc)
 
-print("Clustering...")
-start = cv2.getTickCount()
+# Clustering
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 0.01)
 flags = cv2.KMEANS_PP_CENTERS
+# desc is a type32 numpy array of vstacked descriptors
 compactness, labels, dictionary = cv2.kmeans(desc, dictionary_size, None, criteria, 1, flags)
-print("Time elapsed: {}s".format(get_elapsed_time(start)))
 
-print("Getting histograms...")
-start = cv2.getTickCount()
+# Getting histograms from labels
 size = labels.shape[0] * labels.shape[1]
 for i in xrange(size):
     label = labels[i]
+    # Get this descriptors image id
     img_id = desc_src_img[i]
+    # imgs_data is a list of the same size as the number of images
     data = imgs_data[img_id]
-    data.bow_features[label] += 1
-print("Time elapsed: {}s".format(get_elapsed_time(start)))
+    # data is a numpy array of size (dictionary_size, 1) filled with zeros
+    data[label] += 1
 
-for data, img_file in zip(imgs_data, img_files):
-    if img_file.name == test_img:
-        print data.bow_features.ravel()
+print "Histogram from labels: "
+print imgs_data[0].ravel()
+ax = plt.subplot(311)
+ax.set_title("Histogram from labels")
+ax.set_xlabel("Visual words")
+ax.set_ylabel("Frequency")
+ax.plot(imgs_data[0].ravel())
 
+matcher = cv2.FlannBasedMatcher_create()
 matcher.add(dictionary)
 matcher.train()
 
-for img_file in img_files:
-    if img_file.name == test_img:
-        descriptors = get_descriptors(img_file.img, detector)
-        result = get_bow_features(matcher, descriptors, dictionary_size)
-        print result.ravel()
+descriptors = get_descriptors(imgs[0], detector)
+
+result = np.zeros((dictionary_size, 1), np.float32)
+# flan matcher needs descriptors to be type32
+matches = matcher.match(np.float32(descriptors))
+for match in matches:
+    visual_word = match.trainIdx
+    result[visual_word] += 1
+
+ax = plt.subplot(313)
+ax.set_title("Histogram from FLANN")
+ax.set_xlabel("Visual words")
+ax.set_ylabel("Frequency")
+ax.plot(result.ravel())
+
+plt.show()
