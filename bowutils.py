@@ -4,6 +4,22 @@ import cv2
 import params
 
 
+def get_elapsed_time(start):
+    """ Helper function for timing code execution"""
+    return (cv2.getTickCount() - start) / cv2.getTickFrequency()
+
+
+def print_duration(start):
+    time = get_elapsed_time(start)
+    time_str = ""
+    if time < 60.0:
+        time_str = "{}s".format(round(time, 1))
+    elif time > 60.0:
+        minutes = time / 60.0
+        time_str = "{}:{}m".format(int(minutes), time % 60)
+    print("Took {}".format(time_str))
+
+
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
         raise TypeError("Invalid arguments. Width or height must be provided.")
@@ -17,6 +33,7 @@ def resize_img(img, width=-1, height=-1):
         aspect_ratio = h / float(w)
         new_width = int(height / aspect_ratio)
         return cv2.resize(img, (new_width, height))
+
 
 def imreads(path):
     """
@@ -33,16 +50,17 @@ def imreads(path):
 def stack_array(arr):
     stacked_arr = np.array([])
     for item in arr:
-        if len(stacked_arr) == 0:
-            stacked_arr = np.array(item)
-        else:
-            stacked_arr = np.vstack((stacked_arr, item))
+        # Only stack if it is not empty
+        if len(item) > 0:
+            if len(stacked_arr) == 0:
+                stacked_arr = np.array(item)
+            else:
+                stacked_arr = np.vstack((stacked_arr, item))
     return stacked_arr
 
 
 def get_descriptors(img):
     # returns descriptors of an image
-    print len(params.DETECTOR.detectAndCompute(img, None)[0])
     return params.DETECTOR.detectAndCompute(img, None)[1]
 
 
@@ -69,6 +87,8 @@ class ImageData(object):
 
     def compute_descriptors(self):
         self.descriptors = get_descriptors(self.img)
+        if self.descriptors is None:
+            self.descriptors = np.array([])
 
     def generate_bow_hist(self, dictionary):
         self.features = np.zeros((len(dictionary), 1))

@@ -95,7 +95,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
     return boxes[pick].astype("int")
 
 
-image = cv2.imread("test/pos/test9.jpg")
+image = cv2.imread("test/pos/test8.jpg")
 window_size = (320, 240)
 
 dictionary = np.load(params.DICT_PATH)

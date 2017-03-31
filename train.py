@@ -46,22 +46,30 @@ def main():
         img_count += 1"""
 
     print("Loading images...")
-
+    start = cv2.getTickCount()
     paths = ["train/pos", "train/neg"]
     class_names = ["pos", "neg"]
     imgs_data = get_imgs_data(paths, class_names)
+    print("Loaded {} image(s)".format(len(imgs_data)))
+    print_duration(start)
 
     print("Computing descriptors...")
+    start = cv2.getTickCount()
     [img_data.compute_descriptors() for img_data in imgs_data]
+    print_duration(start)
 
     print("Clustering...")
+    start = cv2.getTickCount()
     dictionary = generate_dictionary(imgs_data, dictionary_size)
+    print_duration(start)
 
     print("Generating histograms...")
+    start = cv2.getTickCount()
     [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
+    print_duration(start)
 
     print("Training SVM...")
-
+    start = cv2.getTickCount()
     # Begin training SVM
     svm = cv2.ml.SVM_create()
     svm.setType(cv2.ml.SVM_C_SVC)
@@ -82,6 +90,7 @@ def main():
         print "Successfully trained SVM with {}% error".format(error * 100)
     else:
         print "Failed to train SVM. {}% error".format(error * 100)
+    print_duration(start)
 
 
 if __name__ == '__main__':
