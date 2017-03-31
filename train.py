@@ -70,6 +70,9 @@ def main():
     [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
     print_duration(start)
 
+    print imgs_data[0].hog().shape
+    print imgs_data[0].features.shape
+
     print("Training SVM...")
     start = cv2.getTickCount()
     # Begin training SVM

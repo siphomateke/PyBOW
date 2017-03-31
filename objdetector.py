@@ -91,8 +91,8 @@ def non_max_suppression_fast(boxes, overlapThresh):
     return boxes[pick].astype("int")
 
 
-image = cv2.imread("test/pos/test8.jpg")
-window_size = (320, 240)
+image = cv2.imread("test/pos/test17.jpg")
+window_size = (640, 480)
 
 dictionary = np.load(params.DICT_PATH)
 svm = cv2.ml.SVM_load(params.SVM_PATH)
@@ -106,7 +106,8 @@ for resized in pyramid(image, scale=1.25):
         current_scale /= 1.25
     rect_img = resized.copy()
     # loop over the sliding window for each layer of the pyramid
-    step = (resized.shape[0] / window_size[0]) * 16
+    #step = (resized.shape[0] / window_size[0]) * 32
+    step = resized.shape[0] / 16
     if step > 0:
         for (x, y, window) in sliding_window(resized, window_size, step_size=step):
 
@@ -127,8 +128,8 @@ for resized in pyramid(image, scale=1.25):
 
             clone = rect_img.copy()
             cv2.rectangle(clone, (x, y), (x + window_size[0], y + window_size[1]), (0, 255, 0), 2)
-            if clone.shape[0] > params.MAX_IMG_WIDTH:
-                clone = resize_img(clone, params.MAX_IMG_WIDTH)
+            """if clone.shape[0] > params.MAX_IMG_WIDTH:
+                clone = resize_img(clone, width=640)"""
             cv2.imshow("Window", clone)
             cv2.waitKey(1)
 

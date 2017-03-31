@@ -16,3 +16,5 @@ MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
 DETECTOR = cv2.AKAZE_create()
 #DETECTOR = cv2.KAZE_create()
 #DETECTOR = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_FAST_SCORE)
+
+HOG_BIN_N = 16
