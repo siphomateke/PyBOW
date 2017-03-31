@@ -13,7 +13,7 @@ def generate_dictionary(imgs_data, dictionary_size):
     flags = cv2.KMEANS_PP_CENTERS
     # desc is a type32 numpy array of vstacked descriptors
     compactness, labels, dictionary = cv2.kmeans(desc, dictionary_size, None, criteria, 1, flags)
-    np.save("ml/dictionary.npy", dictionary)
+    np.save(params.DICT_PATH, dictionary)
 
     return dictionary
 
@@ -21,7 +21,7 @@ def generate_dictionary(imgs_data, dictionary_size):
 def main():
     dictionary_size = 512
     # Loading images
-    imgs_data = []  # type: list[ImageData]
+    """imgs_data = []  # type: list[ImageData]
 
     pos_imgs_path = "train/pos"
     neg_imgs_path = "train/neg"
@@ -43,7 +43,13 @@ def main():
         img_data = ImageData(img)
         img_data.set_class("neg")
         imgs_data.insert(img_count, img_data)
-        img_count += 1
+        img_count += 1"""
+
+    print("Loading images...")
+
+    paths = ["train/pos", "train/neg"]
+    class_names = ["pos", "neg"]
+    imgs_data = get_imgs_data(paths, class_names)
 
     print("Computing descriptors...")
     [img_data.compute_descriptors() for img_data in imgs_data]
@@ -67,7 +73,7 @@ def main():
 
     svm.setTermCriteria((cv2.TERM_CRITERIA_COUNT, 1000, 1.e-06))
     svm.train(samples, cv2.ml.ROW_SAMPLE, responses)
-    svm.save("ml/svm.xml")
+    svm.save(params.SVM_PATH)
 
     output = svm.predict(samples)[1].ravel()
     error = (np.absolute(responses.ravel() - output).sum()) / float(output.shape[0])
@@ -76,6 +82,7 @@ def main():
         print "Successfully trained SVM with {}% error".format(error * 100)
     else:
         print "Failed to train SVM. {}% error".format(error * 100)
+
 
 if __name__ == '__main__':
     main()
