@@ -45,6 +45,8 @@ def main():
         imgs_data.insert(img_count, img_data)
         img_count += 1"""
 
+    program_start = cv2.getTickCount()
+
     print("Loading images...")
     start = cv2.getTickCount()
     paths = ["train/pos", "train/neg"]
@@ -74,6 +76,8 @@ def main():
     svm = cv2.ml.SVM_create()
     svm.setType(cv2.ml.SVM_C_SVC)
     svm.setKernel(cv2.ml.SVM_LINEAR)
+    svm.setC(2.67)
+    svm.setGamma(5.383)
 
     # Compile samples
     samples = get_samples(imgs_data)
@@ -91,6 +95,8 @@ def main():
     else:
         print "Failed to train SVM. {}% error".format(error * 100)
     print_duration(start)
+
+    print("Finished training BOW detector. {}".format(format_time(get_elapsed_time(program_start))))
 
 
 if __name__ == '__main__':

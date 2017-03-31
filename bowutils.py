@@ -9,15 +9,19 @@ def get_elapsed_time(start):
     return (cv2.getTickCount() - start) / cv2.getTickFrequency()
 
 
-def print_duration(start):
-    time = get_elapsed_time(start)
+def format_time(time):
     time_str = ""
     if time < 60.0:
         time_str = "{}s".format(round(time, 1))
     elif time > 60.0:
         minutes = time / 60.0
-        time_str = "{}:{}m".format(int(minutes), time % 60)
-    print("Took {}".format(time_str))
+        time_str = "{}m : {}s".format(int(minutes), round(time % 60, 2))
+    return time_str
+
+
+def print_duration(start):
+    time = get_elapsed_time(start)
+    print("Took {}".format(format_time(time)))
 
 
 def resize_img(img, width=-1, height=-1):
@@ -130,7 +134,11 @@ def get_imgs_data(paths, class_names, dictionary=None):
 
 
 def get_samples(imgs_data):
-    samples = stack_array([[img_data.features] for img_data in imgs_data])
+    # Important! Normalize histograms to remove bias for number of descriptors
+    norm_features = [cv2.normalize(img_data.features, None, 0, len(img_data.features), cv2.NORM_MINMAX) for img_data in
+                     imgs_data]
+    samples = stack_array([[feature] for feature in norm_features])
+    # samples = stack_array([[img_data.features] for img_data in imgs_data])
     return np.float32(samples)
 
 

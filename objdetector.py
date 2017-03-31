@@ -1,12 +1,8 @@
 import numpy as np
 import cv2
 from bowutils import resize_img
-from bowutils import get_imgs_data
-from bowutils import get_samples
-from bowutils import get_responses
 from bowutils import ImageData
 import params
-from matplotlib import pyplot as plt
 
 
 def pyramid(img, scale=1.5, min_size=(30, 30)):
