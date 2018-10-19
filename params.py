@@ -14,15 +14,28 @@ import cv2
 
 ################################################################################
 
+# data location
+
+DATA_training_path_pos = "pedestrain/INRIAPerson/Train/pos/"
+DATA_training_path_neg = "pedestrain/INRIAPerson/Train/neg/"
+
+DATA_testing_path_pos = "pedestrain/INRIAPerson/Test/pos/"
+DATA_testing_path_neg = "pedestrain/INRIAPerson/Test/neg/"
+
+DATA_CLASS_NAMES = {
+    "other": 0,
+    "pedestrain": 1
+}
+
+################################################################################
+
 # settings for BOW approaches
 
 BOW_MAX_IMG_WIDTH = 320
 BOW_SVM_PATH = "svm_bow.xml"
 BOW_DICT_PATH = "bow_dictionary.npy"
-BOW_CLASS_NAMES = {
-    "other": 0,
-    "pedestrain": 1
-}
+
+BOW_dictionary_size = 512
 
 # algorithm = FLANN_INDEX_KDTREE
 
@@ -41,9 +54,5 @@ DETECTOR = cv2.AKAZE_create()
 HOG_BIN_N = 16
 
 HOG_SVM_PATH = "svm_hog.xml"
-HOG_CLASS_NAMES = {
-    "other": 0,
-    "pedestrain": 1
-}
 
 ################################################################################

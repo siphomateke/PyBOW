@@ -38,8 +38,8 @@ def pyramid(img, scale=1.5, min_size=(30, 30)):
 
 def sliding_window(image, window_size, step_size=8):
     # slide a window across the image
-    for y in xrange(0, image.shape[0], step_size):
-        for x in xrange(0, image.shape[1], step_size):
+    for y in range(0, image.shape[0], step_size):
+        for x in range(0, image.shape[1], step_size):
             # yield the current window
             window = image[y:y + window_size[1], x:x + window_size[0]]
             if not (window.shape[0] != window_size[1] or window.shape[1] != window_size[0]):

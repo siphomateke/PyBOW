@@ -31,40 +31,16 @@ def generate_dictionary(imgs_data, dictionary_size):
 
 
 def main():
-    dictionary_size = 512
+
     # Loading images
-    """imgs_data = []  # type: list[ImageData]
-
-    pos_imgs_path = "train/pos"
-    neg_imgs_path = "train/neg"
-
-    print("Loading images...")
-
-    # imreads returns a list of all images in that directory
-    pos_imgs = imreads(pos_imgs_path)
-    neg_imgs = imreads(neg_imgs_path)
-
-    img_count = 0
-    for img in pos_imgs:
-        img_data = ImageData(img)
-        img_data.set_class("pos")
-        imgs_data.insert(img_count, img_data)
-        img_count += 1
-
-    for img in neg_imgs:
-        img_data = ImageData(img)
-        img_data.set_class("neg")
-        imgs_data.insert(img_count, img_data)
-        img_count += 1"""
 
     program_start = cv2.getTickCount()
 
     print("Loading images...")
     start = cv2.getTickCount()
-    paths = ["train/pos", "train/neg"]
-    class_names = ["pos", "neg"]
-    imgs_data = get_imgs_data(paths, class_names)
-    print("Loaded {} image(s)".format(len(imgs_data)))
+    paths = [params.DATA_training_path_pos, params.DATA_training_path_pos]
+    imgs_data = get_imgs_data(paths, params.DATA_CLASS_NAMES)
+    print(("Loaded {} image(s)".format(len(imgs_data))))
     print_duration(start)
 
     print("Computing descriptors...")
@@ -74,7 +50,7 @@ def main():
 
     print("Clustering...")
     start = cv2.getTickCount()
-    dictionary = generate_dictionary(imgs_data, dictionary_size)
+    dictionary = generate_dictionary(imgs_data, params.BOW_dictionary_size)
     print_duration(start)
 
     print("Generating histograms...")
@@ -82,36 +58,39 @@ def main():
     [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
     print_duration(start)
 
-    print imgs_data[0].hog().shape
-    print imgs_data[0].features.shape
+    # print(imgs_data[0].hog().shape);
+    # print(imgs_data[0].features.shape);
 
     print("Training SVM...")
     start = cv2.getTickCount()
     # Begin training SVM
     svm = cv2.ml.SVM_create()
     svm.setType(cv2.ml.SVM_C_SVC)
-    svm.setKernel(cv2.ml.SVM_LINEAR)
-    svm.setC(2.67)
-    svm.setGamma(5.383)
+    svm.setKernel(cv2.ml.SVM_LINEAR) # use linear kernel (alteratives exist)
+    # svm.setC(2.67)
+    # svm.setGamma(5.383)
 
     # Compile samples
     samples = get_samples(imgs_data)
     responses = np.int32([img_data.response for img_data in imgs_data])
 
     svm.setTermCriteria((cv2.TERM_CRITERIA_COUNT, 1000, 1.e-06))
-    svm.train(samples, cv2.ml.ROW_SAMPLE, responses)
+
+    svm.auto_train(samples, cv2.ml.ROW_SAMPLE, responses)
+
+    # svm.train(samples, cv2.ml.ROW_SAMPLE, responses)
     svm.save(params.SVM_PATH)
 
     output = svm.predict(samples)[1].ravel()
     error = (np.absolute(responses.ravel() - output).sum()) / float(output.shape[0])
 
     if error < 0.2:
-        print "Successfully trained SVM with {}% error".format(error * 100)
+        print("Successfully trained SVM with {}% error".format(error * 100))
     else:
-        print "Failed to train SVM. {}% error".format(error * 100)
+        print("Failed to train SVM. {}% error".format(error * 100))
     print_duration(start)
 
-    print("Finished training BOW detector. {}".format(format_time(get_elapsed_time(program_start))))
+    print(("Finished training BOW detector. {}".format(format_time(get_elapsed_time(program_start)))))
 
 
 if __name__ == '__main__':

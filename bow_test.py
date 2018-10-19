@@ -30,9 +30,9 @@ def main():
     output = results[1].ravel()
 
     error = ((np.absolute(responses.ravel() - output).sum()) / float(output.shape[0])) * 100
-    print "Error in test data: {}%".format(error)
+    print("Error in test data: {}%".format(error))
 
-    for i in xrange(len(imgs_data)):
+    for i in range(len(imgs_data)):
         img_data = imgs_data[i]
 
         title = "Prediction: {0}".format(output[i])
