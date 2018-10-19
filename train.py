@@ -1,5 +1,17 @@
+################################################################################
+
+# functionality: ....
+
+# This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
+# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+
+# Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
+# but code portions may have broader origins elsewhere also it appears
+
+################################################################################
+
 import cv2
-from bowutils import *
+from utils import *
 
 
 def generate_dictionary(imgs_data, dictionary_size):

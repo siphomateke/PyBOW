@@ -6,4 +6,4 @@ Requires numpy, matplotlib and OpenCV 3.2.0
 
 ----
 
-Ackowledgements: originally forked from https://github.com/nextgensparx/PyBOW but code may have broader origins elsewhere also it appears
+Ackowledgements: originally forked from https://github.com/nextgensparx/PyBOW but some code portions may have broader origins elsewhere also it appears

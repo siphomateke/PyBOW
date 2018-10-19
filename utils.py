@@ -1,8 +1,23 @@
+################################################################################
+
+# functionality: utility functions for all detection algorithms
+
+# This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
+# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+
+# Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
+# but code portions may have broader origins elsewhere also it appears
+
+################################################################################
+
 import os
 import numpy as np
 import cv2
 import params
 
+################################################################################
+
+## timing information - for training
 
 def get_elapsed_time(start):
     """ Helper function for timing code execution"""
@@ -23,6 +38,7 @@ def print_duration(start):
     time = get_elapsed_time(start)
     print("Took {}".format(format_time(time)))
 
+################################################################################
 
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
@@ -38,11 +54,14 @@ def resize_img(img, width=-1, height=-1):
         new_width = int(height / aspect_ratio)
         return cv2.resize(img, (new_width, height))
 
+################################################################################
+
+# reads all the images in a given folder path and returns the results
+
+# for obvious reasons this will break with a very large dataset as you will run
+# out of memory - so an alternative approach may be required in that case
 
 def imreads(path):
-    """
-    This reads all the images in a given folder and returns the results
-    """
     images_path = [os.path.join(path, f) for f in os.listdir(path)]
     images = []
     for image_path in images_path:
@@ -50,6 +69,7 @@ def imreads(path):
         images.append(img)
     return images
 
+################################################################################
 
 def stack_array(arr):
     stacked_arr = np.array([])
@@ -62,21 +82,27 @@ def stack_array(arr):
                 stacked_arr = np.vstack((stacked_arr, item))
     return stacked_arr
 
+################################################################################
+
+# returns descriptors of an image - used in training and testing
 
 def get_descriptors(img):
-    # returns descriptors of an image
     return params.DETECTOR.detectAndCompute(img, None)[1]
 
+################################################################################
+
+# transform between class numbers (i.e. codes) - {0,1,2, ...N} and
+# names {dog,cat cow, ...} - used in training and testing
 
 def get_class_code(class_name):
     return params.CLASS_NAMES.get(class_name, 0)
-
 
 def get_class_name(class_code):
     for name, code in params.CLASS_NAMES.iteritems():
         if code == class_code:
             return name
 
+################################################################################
 
 class ImageData(object):
     def __init__(self, img):
@@ -94,17 +120,6 @@ class ImageData(object):
         if self.descriptors is None:
             self.descriptors = np.array([])
 
-    def hog(self):
-        gx = cv2.Sobel(self.img, cv2.CV_32F, 1, 0)
-        gy = cv2.Sobel(self.img, cv2.CV_32F, 0, 1)
-        mag, ang = cv2.cartToPolar(gx, gy)
-        bins = np.int32(params.HOG_BIN_N * ang / (2 * np.pi))  # quantizing binvalues in (0...16)
-        bin_cells = bins[:10, :10], bins[10:, :10], bins[:10, 10:], bins[10:, 10:]
-        mag_cells = mag[:10, :10], mag[10:, :10], mag[:10, 10:], mag[10:, 10:]
-        hists = [np.bincount(b.ravel(), m.ravel(), params.HOG_BIN_N) for b, m in zip(bin_cells, mag_cells)]
-        hist = np.hstack(hists)  # hist is a 64 bit vector
-        return hist
-
     def generate_bow_hist(self, dictionary):
         self.features = np.zeros((len(dictionary), 1))
         # FLANN matcher needs descriptors to be type32
@@ -115,6 +130,7 @@ class ImageData(object):
             # Increase count for this visual word in histogram
             self.features[match.trainIdx] += 1
 
+################################################################################
 
 def add_to_imgs_data(path, class_name, imgs_data):
     imgs = imreads(path)
@@ -130,6 +146,7 @@ def add_to_imgs_data(path, class_name, imgs_data):
 
     return imgs_data
 
+################################################################################
 
 def get_imgs_data(paths, class_names, dictionary=None):
     imgs_data = []  # type: list[ImageData]
@@ -137,12 +154,13 @@ def get_imgs_data(paths, class_names, dictionary=None):
     for path, class_name in zip(paths, class_names):
         add_to_imgs_data(path, class_name, imgs_data)
 
-    [img_data.compute_descriptors() for img_data in imgs_data]
+    [img_data.compute_descriptors() fo################################################################################r img_data in imgs_data]
     if dictionary is not None:
         [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
 
     return imgs_data
 
+################################################################################
 
 def get_samples(imgs_data):
     # Important! Normalize histograms to remove bias for number of descriptors
@@ -152,7 +170,10 @@ def get_samples(imgs_data):
     # samples = stack_array([[img_data.features] for img_data in imgs_data])
     return np.float32(samples)
 
+################################################################################
 
 def get_responses(imgs_data):
     responses = [img_data.response for img_data in imgs_data]
     return np.int32(responses)
+
+################################################################################
