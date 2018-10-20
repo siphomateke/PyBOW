@@ -4,7 +4,7 @@
 # using a very basic multi-scale, sliding window (exhaustive search) approach
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
-# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+# License: MIT License
 
 # Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
 
@@ -20,7 +20,8 @@ import params
 
 ################################################################################
 
-directory_to_cycle = params.DATA_testing_path_pos;
+# directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/";
+directory_to_cycle = params.DATA_training_path_pos;
 
 show_scan_window_process = True;
 
@@ -144,7 +145,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         # make a copy for drawing the output
 
-        output = image.clone();
+        output_img = image.copy();
 
         # for a range of different image scales in an image pyramid
 
@@ -182,8 +183,12 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                     if img_data.descriptors is not None:
                         img_data.generate_bow_hist(dictionary)
 
-                        results = svm.predict(np.float32([img_data.features]))
-                        output = results[1].ravel()[0]
+                        #!!! not being normalized as per get_samples() !!!
+
+                        retval, result = svm.predict(np.float32([img_data.features]))
+                        print(result);
+                        print(len(result));
+                        output = result;
 
                         print(output," ", params.DATA_CLASS_NAMES["pedestrain"]);
 
@@ -191,7 +196,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
                         if output == params.DATA_CLASS_NAMES["pedestrain"]:
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
-                            rect *= (1.0 / current_scale) # ???
+                            rect *= (1.0 / current_scale)
                             detections.append(rect)
 
                 # for the overall set of detections perform non maximal suppression
@@ -205,11 +210,11 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                 # draw all the detection on the original image
 
                 for rect in detections:
-                    cv2.rectangle(output, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+                    cv2.rectangle(output_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
 
             # display the image
 
-            cv2.imshow('original image',output)
+            cv2.imshow('original image',output_img)
             key = cv2.waitKey(200) # wait 200ms - N.B. limited this loop to < 5 fps
             if (key == ord('x')):
                 break
