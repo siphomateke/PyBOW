@@ -5,7 +5,7 @@
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
 # License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
 
-# Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
+# Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
 ################################################################################
 
@@ -21,8 +21,11 @@ DATA_training_path_pos = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
 
 # data location - testing examples
 
+# DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
+# DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
+
 DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
-DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
+DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
 
 DATA_WINDOW_SIZE = [64, 128];
 
@@ -40,8 +43,10 @@ BOW_SVM_PATH = "svm_bow.xml"
 BOW_DICT_PATH = "bow_dictionary.npy"
 
 BOW_dictionary_size = 512   # in general, larger = better performance, but potentially slower
+BOW_SVM_kernel = cv2.ml.SVM_RBF;
+BOW_SVM_max_training_iterations = 1000;
 
-# settings for algorithm = FLANN_INDEX_KDTREE
+# settings for algorithm = FLANN_INDEX_KDTREE - ** TODO ** check these params
 
 _index_params = dict(algorithm=0, trees=5)
 _search_params = dict(checks=50)
@@ -51,12 +56,19 @@ MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
-DETECTOR = cv2.AKAZE_create()
-#DETECTOR = cv2.KAZE_create()
-#DETECTOR = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_FAST_SCORE) # check these params
+try:
 
-# DETECTOR = cv2.xfeatures2d.SIFT_create() # -- requires extra modules and non-free build flag
-# DETECTOR = cv2.xfeatures2d.SURF_create() # -- requires extra modules and non-free build flag
+    DETECTOR = cv2.xfeatures2d.SIFT_create() # -- requires extra modules and non-free build flag
+    # DETECTOR = cv2.xfeatures2d.SURF_create() # -- requires extra modules and non-free build flag
+
+    print("Features in use: ", DETECTOR.__class__())
+
+except:
+    # DETECTOR = cv2.AKAZE_create()
+    # DETECTOR = cv2.KAZE_create()
+    DETECTOR = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_FAST_SCORE) # check these params
+
+    print("Falling back to using features: ", DETECTOR.__class__())
 
 ################################################################################
 # settings for HOG approaches
