@@ -22,6 +22,8 @@ import params
 
 directory_to_cycle = params.DATA_testing_path_pos;
 
+show_scan_window_process = True;
+
 ################################################################################
 
 # a very basic approach to produce an image at multi-scales (i.e. variant
@@ -140,7 +142,12 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         image = cv2.imread(os.path.join(directory_to_cycle, filename), cv2.IMREAD_COLOR);
 
-        detections = []
+        # make a copy for drawing the output
+
+        output = image.clone();
+
+        # for a range of different image scales in an image pyramid
+
         current_scale = -1
         for resized in pyramid(image, scale=1.25):
             if current_scale == -1:
@@ -149,18 +156,28 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                 current_scale /= 1.25
             rect_img = resized.copy()
 
-            # loop over the sliding window for each layer of the pyramid
-            #step = (resized.shape[0] / window_size[0]) * 32
+            if (show_scan_window_process):
+                cv2.imshow('current scale',rect_img)
+
+            # loop over the sliding window for each layer of the pyramid (re-sized image)
+
             step = math.floor(resized.shape[0] / 16)
             window_size = params.DATA_WINDOW_SIZE;
+            detections = []
             if step > 0:
                 for (x, y, window) in sliding_window(resized, window_size, step_size=step):
 
-                    cv2.imshow('window',window)
-                    key = cv2.waitKey(10) # wait 200ms
+                    if (show_scan_window_process):
+                        cv2.imshow('current window',window)
+                        key = cv2.waitKey(10) # wait 10ms
+
+                    # for each window region get the BoW feature point descriptors
 
                     img_data = ImageData(window)
                     img_data.compute_descriptors()
+
+                    # generate and classify each window by constructing a BoW
+                    # histogram and passing it through the SVM classifier
 
                     if img_data.descriptors is not None:
                         img_data.generate_bow_hist(dictionary)
@@ -168,25 +185,32 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                         results = svm.predict(np.float32([img_data.features]))
                         output = results[1].ravel()[0]
 
-                        print(output);
+                        print(output," ", params.DATA_CLASS_NAMES["pedestrain"]);
+
+                        # if we get a detection, then record it
 
                         if output == params.DATA_CLASS_NAMES["pedestrain"]:
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
                             rect *= (1.0 / current_scale) # ???
                             detections.append(rect)
-                            cv2.rectangle(rect_img, (x, y), (x + window_size[0], y + window_size[1]), (0, 0, 255), 2)
 
-                            clone = rect_img.copy()
-                            cv2.rectangle(clone, (x, y), (x + window_size[0], y + window_size[1]), (0, 255, 0), 2)
+                # for the overall set of detections perform non maximal suppression
+                # (i.e. remove overlapping boxes etc)
+                # for multi-class problems this could be improved by also using
+                # the distance from the SVM decision boundary (float return value of SVM)
 
                 detections = non_max_suppression_fast(np.int32(detections), 0.4)
                 detections = np.int32(detections)
-                rect_img = image.copy()
-                for rect in detections:
-                    cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
 
-            cv2.imshow('the image',rect_img)
-            key = cv2.waitKey(200) # wait 200ms
+                # draw all the detection on the original image
+
+                for rect in detections:
+                    cv2.rectangle(output, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+
+            # display the image
+
+            cv2.imshow('original image',output)
+            key = cv2.waitKey(200) # wait 200ms - N.B. limited this loop to < 5 fps
             if (key == ord('x')):
                 break
 
