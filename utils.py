@@ -5,7 +5,7 @@
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
 # License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
 
-# Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
+# Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
 ################################################################################
 
@@ -68,6 +68,13 @@ def imreads(path):
     images = []
     for image_path in images_path:
         img = cv2.imread(image_path)
+
+        # to debug image loading uncomment lines below
+
+        #print(image_path)
+        #cv2.imshow("loaded", img)
+        #cv2.waitKey(200)
+
         images.append(img)
     return images
 
