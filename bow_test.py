@@ -5,7 +5,7 @@
 # over that same dataset, using pre-saved the SVM model + BOW dictionary
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
-# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+# License: MIT License
 
 # Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
