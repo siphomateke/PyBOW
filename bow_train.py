@@ -7,12 +7,12 @@
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
 # License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
 
-# Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
+# Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
 ################################################################################
 
 import cv2
-from utils import *     # requires utils.py from same repo
+from utils import *
 
 ################################################################################
 
@@ -84,10 +84,8 @@ def main():
     # define SVM parameters
 
     svm = cv2.ml.SVM_create()
-    svm.setType(cv2.ml.SVM_C_SVC)       # change this for multi-class
-    svm.setKernel(cv2.ml.SVM_LINEAR)    # use linear kernel (alteratives exist)
-    # svm.setC(2.67)
-    # svm.setGamma(5.383)
+    svm.setType(cv2.ml.SVM_C_SVC)           # change this for multi-class
+    svm.setKernel(params.BOW_SVM_kernel)    # use specific kernel type (alteratives exist)
 
     # compile samples (i.e. visual word histograms) for each training image
 
@@ -99,14 +97,13 @@ def main():
 
     # specify the termination criteria for the SVM training
 
-    svm.setTermCriteria((cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_COUNT, 1000, 1.e-06))
+    svm.setTermCriteria((cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_COUNT, params.BOW_SVM_max_training_iterations, 1.e-06))
 
     # perform auto training for the SVM which will essentially perform grid
     # search over the set of parameters for the chosen kernel and the penalty
     # cost term, C (N.B. trainAuto() syntax is correct as of OpenCV 3.4.x)
 
     svm.trainAuto(samples, cv2.ml.ROW_SAMPLE, responses)
-    # svm.train(samples, cv2.ml.ROW_SAMPLE, responses)
 
     # save the tained SVM to file so that we can load it again for testing / detection
 
