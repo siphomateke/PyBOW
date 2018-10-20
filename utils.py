@@ -17,7 +17,7 @@ import params
 ################################################################################
 # global flag to facilitate output of additional info per stage/function
 
-show_additional_process_information = False;
+show_additional_process_information = True;
 
 ################################################################################
 
@@ -133,6 +133,8 @@ class ImageData(object):
     def set_class(self, class_name):
         self.class_name = class_name
         self.response = get_class_code(self.class_name)
+        if show_additional_process_information:
+            print("class name : ", class_name, " - ", self.response);
 
     def compute_descriptors(self):
 
