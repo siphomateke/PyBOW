@@ -16,13 +16,15 @@ import cv2
 
 # data location - training examples
 
-DATA_training_path_neg = "pedestrain/INRIAPerson/Train/neg/"
-DATA_training_path_pos = "pedestrain/INRIAPerson/Train/pos/"
+DATA_training_path_neg = "pedestrain/INRIAPerson/train_64x128_H96/neg/"
+DATA_training_path_pos = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
 
 # data location - testing examples
 
-DATA_testing_path_neg = "pedestrain/INRIAPerson/Test/neg/"
-DATA_testing_path_pos = "pedestrain/INRIAPerson/Test/pos/"
+DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
+DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
+
+DATA_WINDOW_SIZE = [64, 128];
 
 # class names - N.B. ordering of 0, 1 for neg/pos = order of paths
 

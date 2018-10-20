@@ -1,21 +1,31 @@
 ################################################################################
 
-# functionality: ....
+# functionality: perform detection based on Bag of (visual) Words SVM classification
+# using a very basic multi-scale, sliding window (exhaustive search) approach
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
 # License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
 
 # Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
-# but code portions may have broader origins elsewhere also it appears
 
 ################################################################################
 
 import numpy as np
 import cv2
+import os
+import math
 from utils import resize_img
 from utils import ImageData
 import params
 
+################################################################################
+
+directory_to_cycle = params.DATA_testing_path_pos;
+
+################################################################################
+
+# a very basic approach to produce an image at multi-scales (i.e. variant
+# re-sized resolutions) - can be easily improved upon using OpenCV - **TODO** REF
 
 def pyramid(img, scale=1.5, min_size=(30, 30)):
     # yield the original image
@@ -35,6 +45,9 @@ def pyramid(img, scale=1.5, min_size=(30, 30)):
         # yield the next image in the pyramid
         yield img
 
+################################################################################
+
+# generate a set of sliding window locations across the image
 
 def sliding_window(image, window_size, step_size=8):
     # slide a window across the image
@@ -45,6 +58,9 @@ def sliding_window(image, window_size, step_size=8):
             if not (window.shape[0] != window_size[1] or window.shape[1] != window_size[0]):
                 yield (x, y, window)
 
+################################################################################
+
+# perform basic non-maximal suppression of overlapping object detections
 
 def non_max_suppression_fast(boxes, overlapThresh):
     # if there are no boxes, return an empty list
@@ -102,55 +118,82 @@ def non_max_suppression_fast(boxes, overlapThresh):
     # integer data type
     return boxes[pick].astype("int")
 
+####################################################################################
 
-image = cv2.imread("test/pos/test17.jpg")
-window_size = (640, 480)
+# load dictionary and SVM data
 
-dictionary = np.load(params.DICT_PATH)
-svm = cv2.ml.SVM_load(params.SVM_PATH)
+dictionary = np.load(params.BOW_DICT_PATH)
+svm = cv2.ml.SVM_load(params.BOW_SVM_PATH)
 
-detections = []
-current_scale = -1
-for resized in pyramid(image, scale=1.25):
-    if current_scale == -1:
-        current_scale = 1
-    else:
-        current_scale /= 1.25
-    rect_img = resized.copy()
-    # loop over the sliding window for each layer of the pyramid
-    #step = (resized.shape[0] / window_size[0]) * 32
-    step = resized.shape[0] / 16
-    if step > 0:
-        for (x, y, window) in sliding_window(resized, window_size, step_size=step):
+####################################################################################
 
-            img_data = ImageData(window)
-            img_data.compute_descriptors()
+# process all images in directory (sorted by filename)
 
-            if img_data.descriptors is not None:
-                img_data.generate_bow_hist(dictionary)
+for filename in sorted(os.listdir(directory_to_cycle)):
 
-                results = svm.predict(np.float32([img_data.features]))
-                output = results[1].ravel()[0]
+    # if it is a PNG file
 
-                if output == 0.0:
-                    rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
-                    rect *= (1.0 / current_scale)
-                    detections.append(rect)
-                    cv2.rectangle(rect_img, (x, y), (x + window_size[0], y + window_size[1]), (0, 0, 255), 2)
+    if '.png' in filename:
+        print(os.path.join(directory_to_cycle, filename));
 
-            clone = rect_img.copy()
-            cv2.rectangle(clone, (x, y), (x + window_size[0], y + window_size[1]), (0, 255, 0), 2)
-            """if clone.shape[0] > params.MAX_IMG_WIDTH:
-                clone = resize_img(clone, width=640)"""
-            cv2.imshow("Window", clone)
-            cv2.waitKey(1)
+        # read image data
 
-detections = non_max_suppression_fast(np.int32(detections), 0.4)
-detections = np.int32(detections)
-rect_img = image.copy()
-for rect in detections:
-    cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+        image = cv2.imread(os.path.join(directory_to_cycle, filename), cv2.IMREAD_COLOR);
 
-if len(detections)>0:
-    cv2.imshow("Window", resize_img(rect_img, 640))
-    cv2.waitKey(0)
+        detections = []
+        current_scale = -1
+        for resized in pyramid(image, scale=1.25):
+            if current_scale == -1:
+                current_scale = 1
+            else:
+                current_scale /= 1.25
+            rect_img = resized.copy()
+
+            # loop over the sliding window for each layer of the pyramid
+            #step = (resized.shape[0] / window_size[0]) * 32
+            step = math.floor(resized.shape[0] / 16)
+            window_size = params.DATA_WINDOW_SIZE;
+            if step > 0:
+                for (x, y, window) in sliding_window(resized, window_size, step_size=step):
+
+                    cv2.imshow('window',window)
+                    key = cv2.waitKey(10) # wait 200ms
+
+                    img_data = ImageData(window)
+                    img_data.compute_descriptors()
+
+                    if img_data.descriptors is not None:
+                        img_data.generate_bow_hist(dictionary)
+
+                        results = svm.predict(np.float32([img_data.features]))
+                        output = results[1].ravel()[0]
+
+                        print(output);
+
+                        if output == params.DATA_CLASS_NAMES["pedestrain"]:
+                            rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
+                            rect *= (1.0 / current_scale) # ???
+                            detections.append(rect)
+                            cv2.rectangle(rect_img, (x, y), (x + window_size[0], y + window_size[1]), (0, 0, 255), 2)
+
+                            clone = rect_img.copy()
+                            cv2.rectangle(clone, (x, y), (x + window_size[0], y + window_size[1]), (0, 255, 0), 2)
+
+                detections = non_max_suppression_fast(np.int32(detections), 0.4)
+                detections = np.int32(detections)
+                rect_img = image.copy()
+                for rect in detections:
+                    cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+
+            cv2.imshow('the image',rect_img)
+            key = cv2.waitKey(200) # wait 200ms
+            if (key == ord('x')):
+                break
+
+####################################################################################
+
+# close all windows
+
+cv2.destroyAllWindows()
+
+####################################################################################

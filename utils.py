@@ -39,7 +39,8 @@ def print_duration(start):
 
 ################################################################################
 
-### TODO - is this used ???
+# re-size an image with respect to its aspect ratio if needed.
+# Used in the construction of the supplied basic sliding window approach
 
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
@@ -71,6 +72,8 @@ def imreads(path):
     return images
 
 ################################################################################
+
+# stack array of items as basic Pyton data manipulation
 
 def stack_array(arr):
     stacked_arr = np.array([])
