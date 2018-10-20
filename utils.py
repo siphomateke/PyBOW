@@ -208,6 +208,8 @@ def get_samples(imgs_data):
     # Important! Normalize histograms to remove bias for number of descriptors
     # per image or class
 
+    # TODO - move normalization to calculation of histogram
+
     norm_features = [cv2.normalize(img_data.features, None, 0, len(img_data.features), cv2.NORM_MINMAX) for img_data in
                      imgs_data]
 
