@@ -142,11 +142,11 @@ class ImageData(object):
 
         self.descriptors = get_descriptors(self.img)
 
-        if show_additional_process_information:
-            print("# feature descripors computed - ", len(self.descriptors));
-
         if self.descriptors is None:
             self.descriptors = np.array([])
+
+        if show_additional_process_information:
+            print("# feature descripors computed - ", len(self.descriptors));
 
     def generate_bow_hist(self, dictionary):
         self.features = np.zeros((len(dictionary), 1))
