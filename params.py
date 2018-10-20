@@ -3,7 +3,7 @@
 # functionality: parameter settings for detection algorithm training/testing
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
-# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+# License: MIT License
 
 # Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
@@ -25,7 +25,7 @@ DATA_training_path_pos = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
 # DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
 
 DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
-DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
+DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
 
 DATA_WINDOW_SIZE = [64, 128];
 
@@ -42,15 +42,9 @@ DATA_CLASS_NAMES = {
 BOW_SVM_PATH = "svm_bow.xml"
 BOW_DICT_PATH = "bow_dictionary.npy"
 
-BOW_dictionary_size = 512   # in general, larger = better performance, but potentially slower
-BOW_SVM_kernel = cv2.ml.SVM_RBF;
-BOW_SVM_max_training_iterations = 1000;
-
-# settings for algorithm = FLANN_INDEX_KDTREE - ** TODO ** check these params
-
-_index_params = dict(algorithm=0, trees=5)
-_search_params = dict(checks=50)
-MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
+BOW_dictionary_size = 512;  # in general, larger = better performance, but potentially slower
+BOW_SVM_kernel = cv2.ml.SVM_RBF; # see opencv manual for other options
+BOW_SVM_max_training_iterations = 1000; # stop training after max iterations
 
 # specify the type of featrue points to use
 # -- refer to the OpenCV manual for options here, by default this is set to work on
@@ -63,12 +57,36 @@ try:
 
     print("Features in use: ", DETECTOR.__class__())
 
+    _algorithm = 0 # FLANN_INDEX_KDTREE
+    _index_params = dict(algorithm=_algorithm, trees=5)
+    _search_params = dict(checks=50)
+
 except:
     # DETECTOR = cv2.AKAZE_create()
     # DETECTOR = cv2.KAZE_create()
     DETECTOR = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_FAST_SCORE) # check these params
 
+    #if using ORB points
+    # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
+    # N.B. "commented values are recommended as per the docs,
+    # but it didn't provide required results in some cases"
+
+    _algorithm = 6 # FLANN_INDEX_LSH
+    _index_params= dict(algorithm = _algorithm,
+                        table_number = 6, # 12
+                        key_size = 12,     # 20
+                        multi_probe_level = 1) #2
+    _search_params = dict(checks=50)
+
+
+    # SAPIENT ORB uses:
+    # extractor = ORB::create(500, 1.2f, 8, 5, 0, 2, ORB::HARRIS_SCORE, 5, 20);
+
     print("Falling back to using features: ", DETECTOR.__class__())
+
+# based on choice and availability of feature points, set up KD-tree matcher
+
+MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
 
 ################################################################################
 # settings for HOG approaches
