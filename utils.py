@@ -6,7 +6,6 @@
 # License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
 
 # Origin ackowledgements: forked from https://github.com/nextgensparx/PyBOW
-# but code portions may have broader origins elsewhere also it appears
 
 ################################################################################
 
@@ -17,7 +16,7 @@ import params
 
 ################################################################################
 
-## timing information - for training
+# timing information - for training
 
 def get_elapsed_time(start):
     """ Helper function for timing code execution"""
@@ -36,9 +35,11 @@ def format_time(time):
 
 def print_duration(start):
     time = get_elapsed_time(start)
-    print("Took {}".format(format_time(time)))
+    print(("Took {}".format(format_time(time))))
 
 ################################################################################
+
+### TODO - is this used ???
 
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
@@ -95,14 +96,16 @@ def get_descriptors(img):
 # names {dog,cat cow, ...} - used in training and testing
 
 def get_class_code(class_name):
-    return params.CLASS_NAMES.get(class_name, 0)
+    return params.DATA_CLASS_NAMES.get(class_name, 0)
 
 def get_class_name(class_code):
-    for name, code in params.CLASS_NAMES.iteritems():
+    for name, code in params.DATA_CLASS_NAMES.items():
         if code == class_code:
             return name
 
 ################################################################################
+
+# image data class object used in training and batch testing only
 
 class ImageData(object):
     def __init__(self, img):
@@ -116,12 +119,18 @@ class ImageData(object):
         self.response = get_class_code(self.class_name)
 
     def compute_descriptors(self):
+
+        # generate the feature descriptors for a given image
+
         self.descriptors = get_descriptors(self.img)
         if self.descriptors is None:
             self.descriptors = np.array([])
 
     def generate_bow_hist(self, dictionary):
         self.features = np.zeros((len(dictionary), 1))
+
+        # generate the bow histogram of feature occurance from descriptors
+
         # FLANN matcher needs descriptors to be type32
         matches = params.MATCHER.match(np.float32(self.descriptors), dictionary)
         for match in matches:
@@ -132,13 +141,19 @@ class ImageData(object):
 
 ################################################################################
 
+# add images from a specified path to the dataset
+
 def add_to_imgs_data(path, class_name, imgs_data):
+
+    # read all images at location
+
     imgs = imreads(path)
 
     img_count = len(imgs_data)
     for img in imgs:
-        if img.shape[0] > params.MAX_IMG_WIDTH:
-            img = resize_img(img, params.MAX_IMG_WIDTH)
+
+        # add each image to the data set
+
         img_data = ImageData(img)
         img_data.set_class(class_name)
         imgs_data.insert(img_count, img_data)
@@ -148,13 +163,15 @@ def add_to_imgs_data(path, class_name, imgs_data):
 
 ################################################################################
 
+# load image data from specified paths
+
 def get_imgs_data(paths, class_names, dictionary=None):
     imgs_data = []  # type: list[ImageData]
 
     for path, class_name in zip(paths, class_names):
         add_to_imgs_data(path, class_name, imgs_data)
 
-    [img_data.compute_descriptors() fo################################################################################r img_data in imgs_data]
+    [img_data.compute_descriptors() for img_data in imgs_data]
     if dictionary is not None:
         [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
 
@@ -162,15 +179,23 @@ def get_imgs_data(paths, class_names, dictionary=None):
 
 ################################################################################
 
+# return the set of bow dictionary encoded features for the set of data set images
+
 def get_samples(imgs_data):
+
     # Important! Normalize histograms to remove bias for number of descriptors
+    # per image or class
+
     norm_features = [cv2.normalize(img_data.features, None, 0, len(img_data.features), cv2.NORM_MINMAX) for img_data in
                      imgs_data]
+
     samples = stack_array([[feature] for feature in norm_features])
-    # samples = stack_array([[img_data.features] for img_data in imgs_data])
+
     return np.float32(samples)
 
 ################################################################################
+
+# return the set of numerical class labelss
 
 def get_responses(imgs_data):
     responses = [img_data.response for img_data in imgs_data]
