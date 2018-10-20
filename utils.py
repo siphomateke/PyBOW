@@ -3,7 +3,7 @@
 # functionality: utility functions for all detection algorithms
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
-# License: MIT License (https://github.com/tobybreckon/python-bow-hog-object-detection/blob/master/LICENSE)
+# License: MIT License
 
 # Origin acknowledgements: forked from https://github.com/nextgensparx/PyBOW
 
@@ -13,6 +13,11 @@ import os
 import numpy as np
 import cv2
 import params
+
+################################################################################
+# global flag to facilitate output of additional info per stage/function
+
+show_additional_process_information = False;
 
 ################################################################################
 
@@ -69,11 +74,12 @@ def imreads(path):
     for image_path in images_path:
         img = cv2.imread(image_path)
 
-        # to debug image loading uncomment lines below
+        if show_additional_process_information:
+            print("loading file - ", image_path);
 
-        #print(image_path)
-        #cv2.imshow("loaded", img)
-        #cv2.waitKey(200)
+        # to debug image loading uncomment lines below
+        # cv2.imshow("loaded", img)
+        # cv2.waitKey(200)
 
         images.append(img)
     return images
@@ -133,6 +139,10 @@ class ImageData(object):
         # generate the feature descriptors for a given image
 
         self.descriptors = get_descriptors(self.img)
+
+        if show_additional_process_information:
+            print("# feature descripors computed - ", len(self.descriptors));
+
         if self.descriptors is None:
             self.descriptors = np.array([])
 
@@ -200,6 +210,9 @@ def get_samples(imgs_data):
                      imgs_data]
 
     samples = stack_array([[feature] for feature in norm_features])
+
+    if show_additional_process_information:
+        print("# samples encoded to bow histograms - ", len(norm_features));
 
     return np.float32(samples)
 
