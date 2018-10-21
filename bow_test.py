@@ -32,6 +32,8 @@ def main():
 
     # load ** testing ** data sets in the same class order as training
 
+    print("Loading test data as a batch ...")
+
     paths = [params.DATA_testing_path_neg, params.DATA_testing_path_pos]
     class_names = params.DATA_CLASS_NAMES
     imgs_data = get_imgs_data(paths, class_names, dictionary)
@@ -41,6 +43,8 @@ def main():
     samples, responses = get_samples(imgs_data), get_responses(imgs_data)
 
     # perform batch SVM classification over the whole set
+
+    print("Performing batch SVM classification over all data  ...")
 
     results = svm.predict(samples)
     output = results[1].ravel()
