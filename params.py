@@ -46,13 +46,17 @@ BOW_dictionary_size = 512;  # in general, larger = better performance, but poten
 BOW_SVM_kernel = cv2.ml.SVM_RBF; # see opencv manual for other options
 BOW_SVM_max_training_iterations = 1000; # stop training after max iterations
 
+BOW_clustering_iterations = 25; # reduce to improve speed, reduce quality
+
+BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 for variable
+
 # specify the type of featrue points to use
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
 try:
 
-    DETECTOR = cv2.xfeatures2d.SIFT_create() # -- requires extra modules and non-free build flag
+    DETECTOR = cv2.xfeatures2d.SIFT_create(nfeatures=BOW_fixed_feature_per_image_to_use) # -- requires extra modules and non-free build flag
     # DETECTOR = cv2.xfeatures2d.SURF_create() # -- requires extra modules and non-free build flag
 
     print("Features in use: ", DETECTOR.__class__())
@@ -64,7 +68,7 @@ try:
 except:
     # DETECTOR = cv2.AKAZE_create()
     # DETECTOR = cv2.KAZE_create()
-    DETECTOR = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_FAST_SCORE) # check these params
+    DETECTOR = cv2.ORB_create(nfeatures=BOW_fixed_feature_per_image_to_use, scoreType=cv2.ORB_FAST_SCORE) # check these params
 
     #if using ORB points
     # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
