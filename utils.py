@@ -45,8 +45,7 @@ def print_duration(start):
 ################################################################################
 
 # re-size an image with respect to its aspect ratio if needed.
-
-# TODO - unused!
+# used in the multi-scale image pyramid approach
 
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
@@ -69,7 +68,7 @@ def resize_img(img, width=-1, height=-1):
 # for obvious reasons this will break with a very large dataset as you will run
 # out of memory - so an alternative approach may be required in that case
 
-def imreads(path):
+def read_all_images(path):
     images_path = [os.path.join(path, f) for f in os.listdir(path)]
     images = []
     for image_path in images_path:
@@ -112,7 +111,7 @@ def get_descriptors(img):
 # transform between class numbers (i.e. codes) - {0,1,2, ...N} and
 # names {dog,cat cow, ...} - used in training and testing
 
-def get_class_code(class_name):
+def get_class_number(class_name):
     return params.DATA_CLASS_NAMES.get(class_name, 0)
 
 def get_class_name(class_code):
@@ -122,7 +121,8 @@ def get_class_name(class_code):
 
 ################################################################################
 
-# image data class object used in training and batch testing only
+# image data class object that contains the images, descriptors and bag of word
+# histograms
 
 class ImageData(object):
     def __init__(self, img):
@@ -133,7 +133,7 @@ class ImageData(object):
 
     def set_class(self, class_name):
         self.class_name = class_name
-        self.response = get_class_code(self.class_name)
+        self.response = get_class_number(self.class_name)
         if show_additional_process_information:
             print("class name : ", class_name, " - ", self.response);
 
@@ -150,7 +150,7 @@ class ImageData(object):
             print("# feature descriptors computed - ", len(self.descriptors));
 
     def generate_bow_hist(self, dictionary):
-        self.features = np.zeros((len(dictionary), 1))
+        self.bow_histogram = np.zeros((len(dictionary), 1))
 
         # generate the bow histogram of feature occurance from descriptors
 
@@ -160,22 +160,22 @@ class ImageData(object):
             # Get which visual word this descriptor matches in the dictionary
             # match.trainIdx is the visual_word
             # Increase count for this visual word in histogram (known as hard assignment)
-            self.features[match.trainIdx] += 1
+            self.bow_histogram[match.trainIdx] += 1
 
         # Important! - normalize the histogram to L1 to remove bias for number
         # of descriptors per image or class
 
-        self.features = cv2.normalize(self.features, None, alpha=1, beta=0, norm_type=cv2.NORM_L2);
+        self.bow_histogram = cv2.normalize(self.bow_histogram, None, alpha=1, beta=0, norm_type=cv2.NORM_L2);
 
 ################################################################################
 
 # add images from a specified path to the dataset, adding the appropriate class/type name
 
-def add_to_imgs_data(path, class_name, imgs_data):
+def load_image_path(path, class_name, imgs_data):
 
     # read all images at location
 
-    imgs = imreads(path)
+    imgs = read_all_images(path)
 
     img_count = len(imgs_data)
     for img in imgs:
@@ -193,32 +193,28 @@ def add_to_imgs_data(path, class_name, imgs_data):
 
 # load image data from specified paths
 
-def get_imgs_data(paths, class_names, dictionary=None):
+def load_images(paths, class_names):
     imgs_data = []  # type: list[ImageData]
 
     for path, class_name in zip(paths, class_names):
-        add_to_imgs_data(path, class_name, imgs_data)
-
-    [img_data.compute_descriptors() for img_data in imgs_data]
-    if dictionary is not None:
-        [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
+        load_image_path(path, class_name, imgs_data)
 
     return imgs_data
 
 ################################################################################
 
-# return the global set of bow dictionary encoded features for the data set of images
+# return the global set of bow histograms for the data set of images
 
-def get_samples(imgs_data):
+def get_bow_histograms(imgs_data):
 
-    samples = stack_array([[img_data.features] for img_data in imgs_data])
+    samples = stack_array([[img_data.bow_histogram] for img_data in imgs_data])
     return np.float32(samples)
 
 ################################################################################
 
 # return global the set of numerical class labels for the data set of images
 
-def get_responses(imgs_data):
+def get_class_labels(imgs_data):
     responses = [img_data.response for img_data in imgs_data]
     return np.int32(responses)
 
