@@ -206,15 +206,11 @@ def get_imgs_data(paths, class_names, dictionary=None):
 
 ################################################################################
 
-# return the gloval set of bow dictionary encoded features for the data set of images
+# return the global set of bow dictionary encoded features for the data set of images
 
 def get_samples(imgs_data):
 
     samples = stack_array([[img_data.features] for img_data in imgs_data])
-
-    if show_additional_process_information:
-        print("# samples encoded to bow histograms - ", len(norm_features));
-
     return np.float32(samples)
 
 ################################################################################
