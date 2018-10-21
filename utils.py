@@ -17,7 +17,7 @@ import params
 ################################################################################
 # global flag to facilitate output of additional info per stage/function
 
-show_additional_process_information = True;
+show_additional_process_information = False;
 
 ################################################################################
 
@@ -128,14 +128,14 @@ class ImageData(object):
     def __init__(self, img):
         self.img = img
         self.class_name = ""
-        self.response = None
+        self.class_number = None
         self.descriptors = np.array([])
 
     def set_class(self, class_name):
         self.class_name = class_name
-        self.response = get_class_number(self.class_name)
+        self.class_number = get_class_number(self.class_name)
         if show_additional_process_information:
-            print("class name : ", class_name, " - ", self.response);
+            print("class name : ", class_name, " - ", self.class_number);
 
     def compute_descriptors(self):
 
@@ -215,7 +215,7 @@ def get_bow_histograms(imgs_data):
 # return global the set of numerical class labels for the data set of images
 
 def get_class_labels(imgs_data):
-    responses = [img_data.response for img_data in imgs_data]
-    return np.int32(responses)
+    class_labels = [img_data.class_number for img_data in imgs_data]
+    return np.int32(class_labels)
 
 ################################################################################
