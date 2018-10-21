@@ -55,13 +55,13 @@ python3 ./bow_training.py
 ```
 whichs will perform the stages of loading image training set, feature descriptor extraction, k-means clustering and SVM classifier training and output two resulting files ```svm_bow.xml``` (the trained SVM classifier) and ```bow_dictionary.npy``` (the BoW set of visual codewords / cluster centres - known as the dictionary).
 
-To perform batch testing of the bag of works approach you can then simply use ( '' ):
+To perform batch testing of the bag of works approach you can then simply use (or alternatively ...):
 ```
 python3 ./bow_testing.py
 ```
 which will load the ```svm_bow.xml``` and ```bow_dictionary.npy``` created from training and report statistical testing performance over an independent set of test images (not used during training).
 
-To perform detection over a set of images you can then simply use ( '' )::
+To perform detection over a set of images you can then simply use (or alternatively ...):
 ```
 python3 ./bow_detection.py
 ```
