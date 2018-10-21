@@ -50,7 +50,7 @@ def main():
 
     # get the example/sample bow histograms and class labels
 
-    samples, responses = get_bow_histograms(imgs_data), get_class_labels(imgs_data)
+    samples, class_labels = get_bow_histograms(imgs_data), get_class_labels(imgs_data)
 
     # perform batch SVM classification over the whole set
 
@@ -61,7 +61,7 @@ def main():
 
     # compute and report the error over the whole set
 
-    error = ((np.absolute(responses.ravel() - output).sum()) / float(output.shape[0]))
+    error = ((np.absolute(class_labels.ravel() - output).sum()) / float(output.shape[0]))
     print("Successfully trained SVM with {}% testing set error".format(round(error * 100,2)))
     print("-- meaining the SVM got {}% of the testing examples correct!".format(round((1.0 - error) * 100,2)))
 
