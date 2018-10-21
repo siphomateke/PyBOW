@@ -27,7 +27,7 @@ def generate_dictionary(imgs_data, dictionary_size):
 
     # perform clustering - increase iterations and reduce EPS to change performance
 
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 0.01)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, params.BOW_clustering_iterations, 0.01)
     flags = cv2.KMEANS_PP_CENTERS
 
     # desc is a type32 numpy array of vstacked descriptors

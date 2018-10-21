@@ -20,8 +20,9 @@ import params
 
 ################################################################################
 
-directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/"; # edit this to your data path
+# directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/"; # edit this to your data path
 # directory_to_cycle = params.DATA_training_path_pos;
+directory_to_cycle = params.DATA_training_path_neg;
 
 show_scan_window_process = True;
 
@@ -125,9 +126,13 @@ def non_max_suppression_fast(boxes, overlapThresh):
 
 # load dictionary and SVM data
 
-dictionary = np.load(params.BOW_DICT_PATH)
-svm = cv2.ml.SVM_load(params.BOW_SVM_PATH)
-
+try:
+    dictionary = np.load(params.BOW_DICT_PATH)
+    svm = cv2.ml.SVM_load(params.BOW_SVM_PATH)
+except:
+    print("Missing files - dictionary and/or SVM!");
+    print("-- have you performed training to produce these files ?");
+    exit();
 ####################################################################################
 
 # process all images in directory (sorted by filename)
@@ -175,7 +180,6 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                 cv2.waitKey(10);
 
             # loop over the sliding window for each layer of the pyramid (re-sized image)
-
 
             window_size = params.DATA_WINDOW_SIZE
             step = math.floor(resized.shape[0] / 16)
