@@ -203,17 +203,27 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                     if img_data.descriptors is not None:
                         img_data.generate_bow_hist(dictionary)
 
+                        print("detecting with SVM ...")
+
                         retval, [result] = svm.predict(np.float32([img_data.features]))
+
+                        print(result)
 
                         # if we get a detection, then record it
 
                         if result[0] == params.DATA_CLASS_NAMES["pedestrain"]:
+
+                            # store rect as (x1, y1) (x2,y2) pair
+
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
+
+                            print("************************************************* detected with SVM")
+                            cv2.waitKey(0)
 
                             # if we want to see progress show each detection, at each scale
 
                             if (show_scan_window_process):
-                                cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+                                cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
                                 cv2.imshow('current scale',rect_img)
 
                             rect *= (1.0 / current_scale)
@@ -232,7 +242,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
         # finally draw all the detection on the original image
 
         for rect in detections:
-            cv2.rectangle(output_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+            cv2.rectangle(output_img, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
 
         # display the image
 
