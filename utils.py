@@ -45,7 +45,8 @@ def print_duration(start):
 ################################################################################
 
 # re-size an image with respect to its aspect ratio if needed.
-# Used in the construction of the supplied basic sliding window approach
+
+# TODO - unused!
 
 def resize_img(img, width=-1, height=-1):
     if height == -1 and width == -1:
