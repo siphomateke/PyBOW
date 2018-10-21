@@ -20,8 +20,8 @@ import params
 
 ################################################################################
 
-# directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/";
-directory_to_cycle = params.DATA_training_path_pos;
+directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/"; # edit this to your data path
+# directory_to_cycle = params.DATA_training_path_pos;
 
 show_scan_window_process = True;
 
@@ -113,7 +113,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
         # compute the ratio of overlap
         overlap = (w * h) / area[idxs[:last]]
 
-        # delete all indexes from the index list that have
+        # delete all indexes from the index list that have a significant overlap
         idxs = np.delete(idxs, np.concatenate(([last],
                                                np.where(overlap > overlapThresh)[0])))
 
@@ -150,23 +150,43 @@ for filename in sorted(os.listdir(directory_to_cycle)):
         # for a range of different image scales in an image pyramid
 
         current_scale = -1
-        for resized in pyramid(image, scale=1.25):
+        detections = []
+        rescaling_factor = 1.25
+
+        ################################ for each re-scale of the image
+
+        for resized in pyramid(image, scale=rescaling_factor):
+
+            # at the start our scale = 1, because we catch the flag value -1
+
             if current_scale == -1:
                 current_scale = 1
+
+            # after this rescale downwards each time (division by re-scale factor)
+
             else:
-                current_scale /= 1.25
+                current_scale /= rescaling_factor
             rect_img = resized.copy()
+
+            # if we want to see progress show each scale
 
             if (show_scan_window_process):
                 cv2.imshow('current scale',rect_img)
+                cv2.waitKey(10);
 
             # loop over the sliding window for each layer of the pyramid (re-sized image)
 
+
+            window_size = params.DATA_WINDOW_SIZE
             step = math.floor(resized.shape[0] / 16)
-            window_size = params.DATA_WINDOW_SIZE;
-            detections = []
+
             if step > 0:
+
+                ############################# for each scan window
+
                 for (x, y, window) in sliding_window(resized, window_size, step_size=step):
+
+                    # if we want to see progress show each scan window
 
                     if (show_scan_window_process):
                         cv2.imshow('current window',window)
@@ -183,41 +203,43 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                     if img_data.descriptors is not None:
                         img_data.generate_bow_hist(dictionary)
 
-                        #!!! not being normalized as per get_samples() !!!
-
-                        retval, result = svm.predict(np.float32([img_data.features]))
-                        print(result);
-                        print(len(result));
-                        output = result;
-
-                        print(output," ", params.DATA_CLASS_NAMES["pedestrain"]);
+                        retval, [result] = svm.predict(np.float32([img_data.features]))
 
                         # if we get a detection, then record it
 
-                        if output == params.DATA_CLASS_NAMES["pedestrain"]:
+                        if result[0] == params.DATA_CLASS_NAMES["pedestrain"]:
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
+
+                            # if we want to see progress show each detection, at each scale
+
+                            if (show_scan_window_process):
+                                cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+                                cv2.imshow('current scale',rect_img)
+
                             rect *= (1.0 / current_scale)
                             detections.append(rect)
 
-                # for the overall set of detections perform non maximal suppression
-                # (i.e. remove overlapping boxes etc)
-                # for multi-class problems this could be improved by also using
-                # the distance from the SVM decision boundary (float return value of SVM)
+                ########################################################
 
-                detections = non_max_suppression_fast(np.int32(detections), 0.4)
-                detections = np.int32(detections)
+        # For the overall set of detections (over all scales) perform
+        # non maximal suppression (i.e. remove overlapping boxes etc).
+        # For multi-class problems this could be improved by also using
+        # the distance from the SVM decision boundary (float return value of SVM)
 
-                # draw all the detection on the original image
+        detections = non_max_suppression_fast(np.int32(detections), 0.4)
+        detections = np.int32(detections)
 
-                for rect in detections:
-                    cv2.rectangle(output_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
+        # finally draw all the detection on the original image
 
-            # display the image
+        for rect in detections:
+            cv2.rectangle(output_img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 2)
 
-            cv2.imshow('original image',output_img)
-            key = cv2.waitKey(200) # wait 200ms - N.B. limited this loop to < 5 fps
-            if (key == ord('x')):
-                break
+        # display the image
+
+        cv2.imshow('detected object',output_img)
+        key = cv2.waitKey(40) # wait 40ms - N.B. limited this loop to < 25 fps
+        if (key == ord('x')):
+            break
 
 ####################################################################################
 
