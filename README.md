@@ -72,7 +72,7 @@ The above instructions can be repeated for the set of ```hog_...py``` examples t
 ----
 
 ** Acknowledgements:** originally forked from the version at https://github.com/nextgensparx/PyBOW
-[ but some code portions may have broader origins elsewhere also it appears ].
+[ but some code portions may have broader origins elsewhere also it appears such as from this tutorial - https://www.pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/].
 
 **Bugs:** _I do not claim this code to be bug free._ If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
 
