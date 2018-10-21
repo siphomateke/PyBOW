@@ -158,8 +158,14 @@ class ImageData(object):
         for match in matches:
             # Get which visual word this descriptor matches in the dictionary
             # match.trainIdx is the visual_word
-            # Increase count for this visual word in histogram
+            # Increase count for this visual word in histogram (known as hard assignment)
             self.features[match.trainIdx] += 1
+
+        # Important! - normalize the histogram to remove bias for number
+        # of descriptors per image or class
+
+        self.features = cv2.normalize(self.features, None, 0,
+                                    len(self.features), cv2.NORM_MINMAX);
 
 ################################################################################
 
@@ -205,15 +211,7 @@ def get_imgs_data(paths, class_names, dictionary=None):
 
 def get_samples(imgs_data):
 
-    # Important! Normalize histograms to remove bias for number of descriptors
-    # per image or class
-
-    # TODO - move normalization to calculation of histogram
-
-    norm_features = [cv2.normalize(img_data.features, None, 0, len(img_data.features), cv2.NORM_MINMAX) for img_data in
-                     imgs_data]
-
-    samples = stack_array([[feature] for feature in norm_features])
+    samples = stack_array([[img_data.features] for img_data in imgs_data])
 
     if show_additional_process_information:
         print("# samples encoded to bow histograms - ", len(norm_features));
