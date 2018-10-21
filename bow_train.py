@@ -49,7 +49,7 @@ def main():
     print("Loading images...")
     start = cv2.getTickCount()
 
-    # N.B. specify path names in same order as class names (neg, poss)
+    # N.B. specify path names in same order as class names (neg, pos)
 
     paths = [params.DATA_training_path_neg, params.DATA_training_path_pos]
     imgs_data = get_imgs_data(paths, params.DATA_CLASS_NAMES)
