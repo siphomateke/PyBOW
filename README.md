@@ -71,9 +71,9 @@ The above instructions can be repeated for the set of ```hog_...py``` examples t
 
 ----
 
-Acknowledgements: originally forked from the version at https://github.com/nextgensparx/PyBOW
+** Acknowledgements:** originally forked from the version at https://github.com/nextgensparx/PyBOW
 [ but some code portions may have broader origins elsewhere also it appears ].
 
-If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
+**Bugs:** _I do not claim this code to be bug free._ If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
 
 _"may the source be with you"_ - anon.
