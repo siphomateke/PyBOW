@@ -103,7 +103,7 @@ def main():
     # search over the set of parameters for the chosen kernel and the penalty
     # cost term, C (N.B. trainAuto() syntax is correct as of OpenCV 3.4.x)
 
-    svm.trainAuto(samples, cv2.ml.ROW_SAMPLE, responses, kFold = 10, balanced = true);
+    svm.trainAuto(samples, cv2.ml.ROW_SAMPLE, responses, kFold = 10, balanced = True);
 
     # save the tained SVM to file so that we can load it again for testing / detection
 
