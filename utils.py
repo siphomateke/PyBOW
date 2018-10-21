@@ -146,7 +146,7 @@ class ImageData(object):
             self.descriptors = np.array([])
 
         if show_additional_process_information:
-            print("# feature descripors computed - ", len(self.descriptors));
+            print("# feature descriptors computed - ", len(self.descriptors));
 
     def generate_bow_hist(self, dictionary):
         self.features = np.zeros((len(dictionary), 1))
@@ -161,15 +161,14 @@ class ImageData(object):
             # Increase count for this visual word in histogram (known as hard assignment)
             self.features[match.trainIdx] += 1
 
-        # Important! - normalize the histogram to remove bias for number
+        # Important! - normalize the histogram to L1 to remove bias for number
         # of descriptors per image or class
 
-        self.features = cv2.normalize(self.features, None, 0,
-                                    len(self.features), cv2.NORM_MINMAX);
+        self.features = cv2.normalize(self.features, None, alpha=1, beta=0, norm_type=cv2.NORM_L2);
 
 ################################################################################
 
-# add images from a specified path to the dataset
+# add images from a specified path to the dataset, adding the appropriate class/type name
 
 def add_to_imgs_data(path, class_name, imgs_data):
 
@@ -207,7 +206,7 @@ def get_imgs_data(paths, class_names, dictionary=None):
 
 ################################################################################
 
-# return the set of bow dictionary encoded features for the set of data set images
+# return the gloval set of bow dictionary encoded features for the data set of images
 
 def get_samples(imgs_data):
 
@@ -220,7 +219,7 @@ def get_samples(imgs_data):
 
 ################################################################################
 
-# return the set of numerical class labelss
+# return global the set of numerical class labels for the data set of images
 
 def get_responses(imgs_data):
     responses = [img_data.response for img_data in imgs_data]
