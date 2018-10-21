@@ -36,11 +36,21 @@ def main():
 
     paths = [params.DATA_testing_path_neg, params.DATA_testing_path_pos]
     class_names = params.DATA_CLASS_NAMES
-    imgs_data = get_imgs_data(paths, class_names, dictionary)
+    imgs_data = load_images(paths, class_names)
+
+    print("Computing descriptors...") # for each testing image
+    start = cv2.getTickCount()
+    [img_data.compute_descriptors() for img_data in imgs_data]
+    print_duration(start)
+
+    print("Generating histograms...") # for each testing image
+    start = cv2.getTickCount()
+    [img_data.generate_bow_hist(dictionary) for img_data in imgs_data]
+    print_duration(start)
 
     # get the example/sample bow histograms and class labels
 
-    samples, responses = get_samples(imgs_data), get_responses(imgs_data)
+    samples, responses = get_bow_histograms(imgs_data), get_class_labels(imgs_data)
 
     # perform batch SVM classification over the whole set
 

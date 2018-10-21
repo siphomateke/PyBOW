@@ -205,7 +205,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
                         print("detecting with SVM ...")
 
-                        retval, [result] = svm.predict(np.float32([img_data.features]))
+                        retval, [result] = svm.predict(np.float32([img_data.bow_histogram]))
 
                         print(result)
 

@@ -35,6 +35,8 @@ def generate_dictionary(imgs_data, dictionary_size):
     compactness, labels, dictionary = cv2.kmeans(desc, dictionary_size, None, criteria, 1, flags)
     np.save(params.BOW_DICT_PATH, dictionary)
 
+    print("-- k-means clustering compactness result: ", compactness)
+
     return dictionary
 
 ################################################################################
@@ -52,7 +54,7 @@ def main():
     # N.B. specify path names in same order as class names (neg, pos)
 
     paths = [params.DATA_training_path_neg, params.DATA_training_path_pos]
-    imgs_data = get_imgs_data(paths, params.DATA_CLASS_NAMES)
+    imgs_data = load_images(paths, params.DATA_CLASS_NAMES)
 
     print(("Loaded {} image(s)".format(len(imgs_data))))
     print_duration(start)
@@ -89,7 +91,7 @@ def main():
 
     # compile samples (i.e. visual word histograms) for each training image
 
-    samples = get_samples(imgs_data)
+    samples = get_bow_histograms(imgs_data)
 
     # get class label for each training image
 
@@ -121,7 +123,7 @@ def main():
     # e.g. for 2 class labels this would be 1/2 = 0.5 (i.e. 50%)
 
     if error < (1.0 / len(params.DATA_CLASS_NAMES)):
-        print("Successfully trained SVM with {}% training set error".format(round(error * 100,2)))
+        print("Trained SVM obtained {}% training set error".format(round(error * 100,2)))
         print("-- meaining the SVM got {}% of the training examples correct!".format(round((1.0 - error) * 100,2)))
     else:
         print("Failed to train SVM. {}% error".format(round(error * 100,2)))
