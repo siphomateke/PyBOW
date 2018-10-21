@@ -1,9 +1,79 @@
 # Python Bag of (Visual) Words (BoVW) and Histogram of Oriented Gradient (HOG) based Object Detection
 
-An examplar python implementation of the Bag of Visual Words and Histogram of Oriented Gradient (HOG) feature based object detection (BoW or HOG features, SVM classification) using OpenCV.
+An exemplar python implementation of the Bag of Visual Words and Histogram of Oriented Gradient (HOG) feature based object detection (BoW or HOG features, SVM classification) using [OpenCV](http://www.opencv.org).
 
-Requires numpy, matplotlib and OpenCV 3.2.0
+Examples used for teaching within the undergraduate Computer Science programme
+at [Durham University](http://www.durham.ac.uk) (UK) by [Prof. Toby Breckon](http://community.dur.ac.uk/toby.breckon/).
+
+All tested with [OpenCV](http://www.opencv.org) 3.x and Python 3.x (requiring numpy also).
 
 ----
 
-Ackowledgements: originally forked from https://github.com/nextgensparx/PyBOW but some code portions may have broader origins elsewhere also it appears
+### OpenCV Setup:
+
+To ensure you have your [OpenCV](http://www.opencv.org) setup correctly to use these in these examples - please follow the suite of testing examples [here](https://github.com/tobybreckon/python-examples-ip/blob/master/TESTING.md).
+
+----
+
+### Details:
+
+You are provided with a set of 7 example files as follows:
+
+- ```bow_training.py``` - performs object detection batch training using a bag of visual words (BoW) approach and SVM classification.
+
+- ```bow_testing.py``` - performs object detection batch testing using a bag of visual words (BoW) approach and SVM classification.
+
+- ```bow_detection.py``` - performs object detection via sliding window search using a bag of visual words (BoW) approach and SVM classification over a directory of specified images.
+
+** Still TODO **
+
+- ```hog_training.py``` - performs object detection batch training using Histogram of Oriented Gradients (HOG) and SVM classification.
+
+- ```hog_testing.py```  - performs object detection batch testing using Histogram of Oriented Gradients (HOG) and SVM classification.
+
+- ```hog_detection.py``` - performs object detection via sliding window search using Histogram of Oriented Gradients (HOG) and SVM classification over a directory of specified images.
+
+- ```selective_search.py``` - performs selective search to generate object windows as an alternative to sliding window search (generates windows only, does not perform integrated object detection).
+
+----
+
+### How to download and run:
+
+Download each file as needed (or download/uncompress a zip from [here](https://github.com/tobybreckon/python-bow-hog-object-detection/archive/master.zip)) or to download the entire repository in an environment where you have git installed try:
+```
+git clone https://github.com/tobybreckon/python-bow-hog-object-detection
+cd python-bow-hog-object-detection
+```
+In order to perform training you will need to first download the dataset, which can be achieved as follows on a linux/unix based system (or can alteratively be downloaded from [here](ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar):
+```
+sh ./download-data.sh
+```
+
+To perform training of the bag of works approach you can simply run as follows (or alternatively how you run python scripts in your environment):
+```
+python3 ./bow_training.py
+```
+whichs will perform the stages of loading image training set, feature descriptor extraction, k-means clustering and SVM classifier training and output two resulting files ```svm_bow.xml``` (the trained SVM classifier) and ```bow_dictionary.npy``` (the BoW set of visual codewords / cluster centres - known as the dictionary).
+
+To perform batch testing of the bag of works approach you can then simply use ( '' ):
+```
+python3 ./bow_testing.py
+```
+which will load the ```svm_bow.xml``` and ```bow_dictionary.npy``` created from training and report statistical testing performance over an independent set of test images (not used during training).
+
+To perform detection over a set of images you can then simply use ( '' )::
+```
+python3 ./bow_detection.py
+```
+which will again load the ```svm_bow.xml``` and ```bow_dictionary.npy``` created from training but now perform multi-scale sliding window based detection over a set of images in a directory specified by the variable ```directory_to_cycle = "...."``` at the top of this python script file.
+
+The above instructions can be repeated for the set of ```hog_...py``` examples to perform training (to produce a single ```svm_hog.xml``` file), testing and subsequent detection as before.
+
+----
+
+Acknowledgements: originally forked from the version at https://github.com/nextgensparx/PyBOW
+[ but some code portions may have broader origins elsewhere also it appears ].
+
+If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
+
+_"may the source be with you"_ - anon.
