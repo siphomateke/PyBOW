@@ -19,6 +19,8 @@ To ensure you have your [OpenCV](http://www.opencv.org) setup correctly to use t
 
 You are provided with a set of 7 example files as follows:
 
+** NOT COMPLETE **
+
 - ```bow_training.py``` - performs object detection batch training using a bag of visual words (BoW) approach and SVM classification.
 
 - ```bow_testing.py``` - performs object detection batch testing using a bag of visual words (BoW) approach and SVM classification.
