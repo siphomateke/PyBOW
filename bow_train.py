@@ -95,7 +95,7 @@ def main():
 
     # get class label for each training image
 
-    responses = np.int32([img_data.response for img_data in imgs_data])
+    class_labels = get_class_labels(imgs_data);
 
     # specify the termination criteria for the SVM training
 
@@ -105,7 +105,7 @@ def main():
     # search over the set of parameters for the chosen kernel and the penalty
     # cost term, C (N.B. trainAuto() syntax is correct as of OpenCV 3.4.x)
 
-    svm.trainAuto(samples, cv2.ml.ROW_SAMPLE, responses, kFold = 10, balanced = True);
+    svm.trainAuto(samples, cv2.ml.ROW_SAMPLE, class_labels, kFold = 10, balanced = True);
 
     # save the tained SVM to file so that we can load it again for testing / detection
 
@@ -117,7 +117,7 @@ def main():
     # perform prediction over the set of examples we trained over
 
     output = svm.predict(samples)[1].ravel()
-    error = (np.absolute(responses.ravel() - output).sum()) / float(output.shape[0])
+    error = (np.absolute(class_labels.ravel() - output).sum()) / float(output.shape[0])
 
     # we are succesful if our prediction > than random
     # e.g. for 2 class labels this would be 1/2 = 0.5 (i.e. 50%)
