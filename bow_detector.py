@@ -10,19 +10,17 @@
 
 ################################################################################
 
-import numpy as np
 import cv2
 import os
+import numpy as np
 import math
-from utils import resize_img
-from utils import ImageData
 import params
+from utils import *
 
 ################################################################################
 
-# directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/"; # edit this to your data path
-# directory_to_cycle = params.DATA_training_path_pos;
-directory_to_cycle = params.DATA_training_path_neg;
+#directory_to_cycle = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
+directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/";
 
 show_scan_window_process = True;
 
@@ -122,7 +120,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
     # integer data type
     return boxes[pick].astype("int")
 
-####################################################################################
+################################################################################
 
 # load dictionary and SVM data
 
@@ -133,7 +131,14 @@ except:
     print("Missing files - dictionary and/or SVM!");
     print("-- have you performed training to produce these files ?");
     exit();
-####################################################################################
+
+# print some checks
+
+print("dictionary size : ", dictionary.shape)
+print("svm size : ", len(svm.getSupportVectors()))
+print("svm var count : ", svm.getVarCount())
+
+################################################################################
 
 # process all images in directory (sorted by filename)
 
@@ -146,11 +151,11 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         # read image data
 
-        image = cv2.imread(os.path.join(directory_to_cycle, filename), cv2.IMREAD_COLOR);
+        img = cv2.imread(os.path.join(directory_to_cycle, filename), cv2.IMREAD_COLOR)
 
         # make a copy for drawing the output
 
-        output_img = image.copy();
+        output_img = img.copy();
 
         # for a range of different image scales in an image pyramid
 
@@ -160,7 +165,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         ################################ for each re-scale of the image
 
-        for resized in pyramid(image, scale=rescaling_factor):
+        for resized in pyramid(img, scale=rescaling_factor):
 
             # at the start our scale = 1, because we catch the flag value -1
 
@@ -171,6 +176,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
             else:
                 current_scale /= rescaling_factor
+
             rect_img = resized.copy()
 
             # if we want to see progress show each scale
@@ -222,7 +228,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
 
                             print("************************************************* detected with SVM")
-                            cv2.waitKey(0)
+                            cv2.waitKey(40)
 
                             # if we want to see progress show each detection, at each scale
 
@@ -237,28 +243,21 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
         # For the overall set of detections (over all scales) perform
         # non maximal suppression (i.e. remove overlapping boxes etc).
-        # For multi-class problems this could be improved by also using
-        # the distance from the SVM decision boundary (float return value of SVM)
 
         detections = non_max_suppression_fast(np.int32(detections), 0.4)
-        detections = np.int32(detections)
 
         # finally draw all the detection on the original image
 
         for rect in detections:
             cv2.rectangle(output_img, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
 
-        # display the image
-
-        cv2.imshow('detected object',output_img)
-        key = cv2.waitKey(40) # wait 40ms - N.B. limited this loop to < 25 fps
+        cv2.imshow('detected objects',output_img)
+        key = cv2.waitKey(200) # wait 200ms
         if (key == ord('x')):
             break
-
-####################################################################################
 
 # close all windows
 
 cv2.destroyAllWindows()
 
-####################################################################################
+#####################################################################
