@@ -17,7 +17,7 @@ import params
 ################################################################################
 # global flag to facilitate output of additional info per stage/function
 
-show_additional_process_information = False;
+show_additional_process_information = True;
 
 ################################################################################
 
@@ -165,7 +165,7 @@ class ImageData(object):
         # Important! - normalize the histogram to L1 to remove bias for number
         # of descriptors per image or class
 
-        self.bow_histogram = cv2.normalize(self.bow_histogram, None, alpha=1, beta=0, norm_type=cv2.NORM_L2);
+        self.bow_histogram = cv2.normalize(self.bow_histogram, None, alpha=1, beta=0, norm_type=cv2.NORM_L1);
 
 ################################################################################
 
