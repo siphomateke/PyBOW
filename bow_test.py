@@ -14,7 +14,6 @@
 import numpy as np
 import cv2
 from utils import *
-from matplotlib import pyplot as plt
 
 ################################################################################
 
