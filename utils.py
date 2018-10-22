@@ -163,7 +163,7 @@ class ImageData(object):
             self.bow_histogram[match.trainIdx] += 1
 
         # Important! - normalize the histogram to L1 to remove bias for number
-        # of descriptors per image or class
+        # of descriptors per image or class (could use L2?)
 
         self.bow_histogram = cv2.normalize(self.bow_histogram, None, alpha=1, beta=0, norm_type=cv2.NORM_L1);
 
