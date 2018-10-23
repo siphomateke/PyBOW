@@ -53,19 +53,26 @@ def main():
 
     paths = [params.DATA_training_path_neg, params.DATA_training_path_pos]
 
+    # build a lisyt of class names automatically from our dictionary of class (name,number) pairs
+
+    class_names = [get_class_name(class_number) for class_number in range(len(params.DATA_CLASS_NAMES))]
+
     # specify number of sub-window samples to take from each positive and negative
     # example image in the data set
     # N.B. specify in same order as class names (neg, pos) - again
 
     sampling_sizes = [params.DATA_training_sample_count_neg, params.DATA_training_sample_count_pos]
 
-    # build a lisyt of class names automatically from our dictionary of class (name,number) pairs
+    # do we want to take samples only centric to the example image or ramdonly?
+    # No - for background -ve images (first class)
+    # Yes - for object samples +ve images (second class)
 
-    class_names = [get_class_name(class_number) for class_number in range(len(params.DATA_CLASS_NAMES))]
+    sample_from_centre = [False, True];
 
     # perform image loading
 
-    imgs_data = load_images(paths, class_names, sampling_sizes, params.DATA_WINDOW_SIZE);
+    imgs_data = load_images(paths, class_names, sampling_sizes, sample_from_centre,
+                            params.DATA_WINDOW_OFFSET_FOR_TRAINING_SAMPLES, params.DATA_WINDOW_SIZE);
 
     print(("Loaded {} image(s)".format(len(imgs_data))))
     print_duration(start)
