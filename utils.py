@@ -229,13 +229,8 @@ def generate_patches(img, sample_patches_to_generate=0, centre_weighted=False,
 
             # add the patch to the list of patches
 
-            print("h x w", img_height, " ", img_width,
-            "psh x pew ", patch_start_h, " ", patch_start_h + patch_height, "psw x pew ",patch_start_w, patch_start_w + patch_width)
-
             patch = img[patch_start_h:patch_start_h + patch_height, patch_start_w:patch_start_w + patch_width]
 
-            out_height, out_width, _ = patch.shape;
-            print("patch output size: ", out_height, " ", out_width)
             if (show_images_as_they_are_sampled):
                 cv2.imshow("patch", patch);
                 cv2.waitKey(5);
