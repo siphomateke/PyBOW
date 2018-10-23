@@ -19,7 +19,6 @@ from utils import *
 
 ################################################################################
 
-#directory_to_cycle = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
 directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/";
 
 show_scan_window_process = True;
