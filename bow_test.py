@@ -30,12 +30,13 @@ def main():
         exit();
 
     # load ** testing ** data sets in the same class order as training
+    # (here we perform no patch sampling of the data as we are not training)
 
     print("Loading test data as a batch ...")
 
     paths = [params.DATA_testing_path_neg, params.DATA_testing_path_pos]
     class_names = params.DATA_CLASS_NAMES
-    imgs_data = load_images(paths, class_names)
+    imgs_data = load_images(paths, class_names, [0,0])
 
     print("Computing descriptors...") # for each testing image
     start = cv2.getTickCount()
