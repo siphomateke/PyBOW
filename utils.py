@@ -13,6 +13,7 @@ import os
 import numpy as np
 import cv2
 import params
+import math
 import random
 
 ################################################################################
@@ -169,8 +170,10 @@ class ImageData(object):
 ################################################################################
 
 # generates a set of random sample patches from a given image of a specified size
+# with an optional flag just to train from patches centred around the centre of the image
 
-def generate_patches(img, sample_patches_to_generate=0, patch_size=(64,128)):
+def generate_patches(img, sample_patches_to_generate=0, centre_weighted=False,
+                            centre_sampling_offset=10, patch_size=(64,128)):
 
     patches = [];
 
@@ -193,15 +196,46 @@ def generate_patches(img, sample_patches_to_generate=0, patch_size=(64,128)):
 
         for patch_count in range(sample_patches_to_generate):
 
-            # randomly select a patch, ensuring we stay inside the image
+            # if we are using centre weighted patches, first grab the centre patch
+            # from the image as the first sample then take the rest around centre
 
-            patch_start_h =  random.randint(0, (img_height - patch_height));
-            patch_start_w =  random.randint(0, (img_width - patch_width));
+            if (centre_weighted):
 
-            # add this patch to the list of patches
+                # compute a patch location in centred on the centre of the image
+
+                patch_start_h =  math.floor(img_height / 2) - math.floor(patch_height / 2);
+                patch_start_w =  math.floor(img_width / 2) - math.floor(patch_width / 2);
+
+                # for the first sample we'll just keep the centre one, for any
+                # others take them from the centre position +/- centre_sampling_offset
+                # in both height and width position
+
+                if (patch_count > 0):
+                    patch_start_h =  random.randint(patch_start_h - centre_sampling_offset, patch_start_h + centre_sampling_offset);
+                    patch_start_w =  random.randint(patch_start_w - centre_sampling_offset, patch_start_w + centre_sampling_offset);
+
+                # print("centred weighted path")
+
+            # else get patches randonly from anywhere in the image
+
+            else:
+
+                # print("non centred weighted path")
+
+                # randomly select a patch, ensuring we stay inside the image
+
+                patch_start_h =  random.randint(0, (img_height - patch_height));
+                patch_start_w =  random.randint(0, (img_width - patch_width));
+
+            # add the patch to the list of patches
+
+            print("h x w", img_height, " ", img_width,
+            "psh x pew ", patch_start_h, " ", patch_start_h + patch_height, "psw x pew ",patch_start_w, patch_start_w + patch_width)
 
             patch = img[patch_start_h:patch_start_h + patch_height, patch_start_w:patch_start_w + patch_width]
 
+            out_height, out_width, _ = patch.shape;
+            print("patch output size: ", out_height, " ", out_width)
             if (show_images_as_they_are_sampled):
                 cv2.imshow("patch", patch);
                 cv2.waitKey(5);
@@ -213,9 +247,10 @@ def generate_patches(img, sample_patches_to_generate=0, patch_size=(64,128)):
 ################################################################################
 
 # add images from a specified path to the dataset, adding the appropriate class/type name
-# and optionally adding up to N samples of a specified size
+# and optionally adding up to N samples of a specified size with flags for taking them
+# from the centre of the image only with +/- offset in pixels
 
-def load_image_path(path, class_name, imgs_data, samples=0, patch_size=(64,128)):
+def load_image_path(path, class_name, imgs_data, samples=0, centre_weighting=False, centre_sampling_offset=10 ,patch_size=(64,128)):
 
     # read all images at location
 
@@ -232,10 +267,11 @@ def load_image_path(path, class_name, imgs_data, samples=0, patch_size=(64,128))
         # if zero samples is specified then generate_patches just returns
         # the original image (unchanged, unsampled) as [img]
 
-        for img_patch in generate_patches(img, samples, patch_size):
+        for img_patch in generate_patches(img, samples, centre_weighting, centre_sampling_offset, patch_size):
 
             if show_additional_process_information:
-                print("path: ", path, "class_name: ", class_name, "patch: ", img_count)
+                print("path: ", path, "class_name: ", class_name, "patch #: ", img_count)
+                print("patch: ", patch_size, "from centre: ", centre_weighting, "with offset: ", centre_sampling_offset)
 
             # add each image patch to the data set
 
@@ -250,14 +286,14 @@ def load_image_path(path, class_name, imgs_data, samples=0, patch_size=(64,128))
 
 # load image data from specified paths
 
-def load_images(paths, class_names, sample_set_sizes, patch_size=(64,128)):
+def load_images(paths, class_names, sample_set_sizes, use_centre_weighting_flags, centre_sampling_offset=10, patch_size=(64,128)):
     imgs_data = []  # type: list[ImageData]
 
     # for each specified path and corresponding class_name and required number
     # of samples - add them to the data set
 
-    for path, class_name, sample_count in zip(paths, class_names, sample_set_sizes):
-        load_image_path(path, class_name, imgs_data, sample_count, patch_size)
+    for path, class_name, sample_count, centre_weighting in zip(paths, class_names, sample_set_sizes, use_centre_weighting_flags):
+        load_image_path(path, class_name, imgs_data, sample_count, centre_weighting, centre_sampling_offset, patch_size)
 
     return imgs_data
 
