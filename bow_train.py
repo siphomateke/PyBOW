@@ -35,8 +35,6 @@ def generate_dictionary(imgs_data, dictionary_size):
     compactness, labels, dictionary = cv2.kmeans(desc, dictionary_size, None, criteria, 1, flags)
     np.save(params.BOW_DICT_PATH, dictionary)
 
-    print("-- k-means clustering compactness result: ", compactness)
-
     return dictionary
 
 ################################################################################
@@ -51,10 +49,23 @@ def main():
     print("Loading images...")
     start = cv2.getTickCount()
 
-    # N.B. specify path names in same order as class names (neg, pos)
+    # N.B. specify data path names in same order as class names (neg, pos)
 
     paths = [params.DATA_training_path_neg, params.DATA_training_path_pos]
-    imgs_data = load_images(paths, params.DATA_CLASS_NAMES)
+
+    # specify number of sub-window samples to take from each positive and negative
+    # example image in the data set
+    # N.B. specify in same order as class names (neg, pos) - again
+
+    sampling_sizes = [params.DATA_training_sample_count_neg, params.DATA_training_sample_count_pos]
+
+    # build a lisyt of class names automatically from our dictionary of class (name,number) pairs
+
+    class_names = [get_class_name(class_number) for class_number in range(len(params.DATA_CLASS_NAMES))]
+
+    # perform image loading
+
+    imgs_data = load_images(paths, class_names, sampling_sizes, params.DATA_WINDOW_SIZE);
 
     print(("Loaded {} image(s)".format(len(imgs_data))))
     print_duration(start)
