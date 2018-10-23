@@ -16,18 +16,27 @@ import cv2
 
 # data location - training examples
 
-DATA_training_path_neg = "pedestrain/INRIAPerson/train_64x128_H96/neg/"
+DATA_training_path_neg = "pedestrain/INRIAPerson/Train/neg/"
 DATA_training_path_pos = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
 
 # data location - testing examples
 
-# DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
-# DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
-
-DATA_testing_path_neg = "pedestrain/INRIAPerson/test_64x128_H96/neg/"
+DATA_testing_path_neg = "pedestrain/INRIAPerson/Test/neg/"
 DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
 
+# size of the sliding window patch / image patch to be used for classification
+# (for larger windows sizes, for example from selective search - resize the
+# window to this size before feature descriptor extraction / classification)
+
 DATA_WINDOW_SIZE = [64, 128];
+
+# number of sample patches to extract from each negative training example
+
+DATA_training_sample_count_neg = 10;
+
+# number of sample patches to extract from each positive training example
+
+DATA_training_sample_count_pos = 5;
 
 # class names - N.B. ordering of 0, 1 for neg/pos = order of paths
 
