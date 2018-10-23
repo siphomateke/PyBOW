@@ -10,19 +10,22 @@
 ################################################################################
 
 import cv2
+import os
 
 ################################################################################
 # settings for datsets in general
 
+master_path_to_dataset = "/tmp/pedestrain"; # ** need to edit this **
+
 # data location - training examples
 
-DATA_training_path_neg = "pedestrain/INRIAPerson/Train/neg/"
-DATA_training_path_pos = "pedestrain/INRIAPerson/train_64x128_H96/pos/"
+DATA_training_path_neg = os.path.join(master_path_to_dataset,"INRIAPerson/Train/neg/");
+DATA_training_path_pos = os.path.join(master_path_to_dataset,"INRIAPerson/train_64x128_H96/pos/");
 
 # data location - testing examples
 
-DATA_testing_path_neg = "pedestrain/INRIAPerson/Test/neg/"
-DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
+DATA_testing_path_neg = os.path.join(master_path_to_dataset,"INRIAPerson/Test/neg/");
+DATA_testing_path_pos = os.path.join(master_path_to_dataset,"INRIAPerson/test_64x128_H96/pos/");
 
 # size of the sliding window patch / image patch to be used for classification
 # (for larger windows sizes, for example from selective search - resize the
@@ -30,9 +33,14 @@ DATA_testing_path_pos = "pedestrain/INRIAPerson/test_64x128_H96/pos/"
 
 DATA_WINDOW_SIZE = [64, 128];
 
+# the maximum left/right, up/down offset to use when generating samples for training
+# that are centred around the centre of the image
+
+DATA_WINDOW_OFFSET_FOR_TRAINING_SAMPLES = 3;
+
 # number of sample patches to extract from each negative training example
 
-DATA_training_sample_count_neg = 10;
+DATA_training_sample_count_neg = 5;
 
 # number of sample patches to extract from each positive training example
 
@@ -53,13 +61,13 @@ BOW_DICT_PATH = "bow_dictionary.npy"
 
 BOW_dictionary_size = 512;  # in general, larger = better performance, but potentially slower
 BOW_SVM_kernel = cv2.ml.SVM_RBF; # see opencv manual for other options
-BOW_SVM_max_training_iterations = 1000; # stop training after max iterations
+BOW_SVM_max_training_iterations = 500; # stop training after max iterations
 
-BOW_clustering_iterations = 25; # reduce to improve speed, reduce quality
+BOW_clustering_iterations = 20; # reduce to improve speed, reduce quality
 
-BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 for variable
+BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 for variable number
 
-# specify the type of featrue points to use
+# specify the type of feature points to use
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
