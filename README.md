@@ -17,9 +17,7 @@ To ensure you have your [OpenCV](http://www.opencv.org) setup correctly to use t
 
 ### Details:
 
-You are provided with a set of 7 example files as follows:
-
-** NOT COMPLETE **
+You are provided with a set of 7 example files that can be run individually as follows:
 
 - ```bow_training.py``` - performs object detection batch training using a bag of visual words (BoW) approach and SVM classification.
 
@@ -27,15 +25,16 @@ You are provided with a set of 7 example files as follows:
 
 - ```bow_detector.py``` - performs object detection via sliding window search using a bag of visual words (BoW) approach and SVM classification over a directory of specified images.
 
-** Still TODO **
 
-- ```hog_training.py``` - performs object detection batch training using Histogram of Oriented Gradients (HOG) and SVM classification.
+- ** Still TODO ** ```hog_training.py``` - performs object detection batch training using Histogram of Oriented Gradients (HOG) and SVM classification.
 
-- ```hog_testing.py```  - performs object detection batch testing using Histogram of Oriented Gradients (HOG) and SVM classification.
+- ** Still TODO ** ```hog_testing.py```  - performs object detection batch testing using Histogram of Oriented Gradients (HOG) and SVM classification.
 
-- ```hog_detector.py``` - performs object detection via sliding window search using Histogram of Oriented Gradients (HOG) and SVM classification over a directory of specified images.
+- ** Still TODO ** ```hog_detector.py``` - performs object detection via sliding window search using Histogram of Oriented Gradients (HOG) and SVM classification over a directory of specified images.
 
 - ```selective_search.py``` - performs selective search to generate object windows as an alternative to sliding window search (generates windows only, does not perform integrated object detection).
+
+and additional supporting code in ```utils.py``` (image loading / feature extraction) and ```sliding_window.py``` (multi-scale sliding window) which are imported into the above.
 
 ----
 
