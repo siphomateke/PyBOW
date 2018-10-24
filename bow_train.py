@@ -19,7 +19,7 @@ from utils import *
 def generate_dictionary(imgs_data, dictionary_size):
 
     # Extracting descriptors
-    desc = stack_array([img_data.descriptors for img_data in imgs_data])
+    desc = stack_array([img_data.bow_descriptors for img_data in imgs_data])
 
     # important, cv2.kmeans() clustering only accepts type32 descriptors
 
@@ -82,7 +82,7 @@ def main():
 
     print("Computing descriptors...") # for each training image
     start = cv2.getTickCount()
-    [img_data.compute_descriptors() for img_data in imgs_data]
+    [img_data.compute_bow_descriptors() for img_data in imgs_data]
     print_duration(start)
 
     print("Clustering...")          # over all images to generate dictionary code book/words

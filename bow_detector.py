@@ -204,12 +204,12 @@ for filename in sorted(os.listdir(directory_to_cycle)):
                     # for each window region get the BoW feature point descriptors
 
                     img_data = ImageData(window)
-                    img_data.compute_descriptors()
+                    img_data.compute_bow_descriptors()
 
                     # generate and classify each window by constructing a BoW
                     # histogram and passing it through the SVM classifier
 
-                    if img_data.descriptors is not None:
+                    if img_data.bow_descriptors is not None:
                         img_data.generate_bow_hist(dictionary)
 
                         print("detecting with SVM ...")

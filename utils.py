@@ -129,7 +129,7 @@ class ImageData(object):
         self.img = img
         self.class_name = ""
         self.class_number = None
-        self.descriptors = np.array([])
+        self.bow_descriptors = np.array([])
 
     def set_class(self, class_name):
         self.class_name = class_name
@@ -137,17 +137,17 @@ class ImageData(object):
         if show_additional_process_information:
             print("class name : ", class_name, " - ", self.class_number);
 
-    def compute_descriptors(self):
+    def compute_bow_descriptors(self):
 
         # generate the feature descriptors for a given image
 
-        self.descriptors = get_descriptors(self.img)
+        self.bow_descriptors = get_descriptors(self.img)
 
-        if self.descriptors is None:
-            self.descriptors = np.array([])
+        if self.bow_descriptors is None:
+            self.bow_descriptors = np.array([])
 
         if show_additional_process_information:
-            print("# feature descriptors computed - ", len(self.descriptors));
+            print("# feature descriptors computed - ", len(self.bow_descriptors));
 
     def generate_bow_hist(self, dictionary):
         self.bow_histogram = np.zeros((len(dictionary), 1))
@@ -155,7 +155,7 @@ class ImageData(object):
         # generate the bow histogram of feature occurance from descriptors
 
         # FLANN matcher needs descriptors to be type32
-        matches = params.MATCHER.match(np.float32(self.descriptors), dictionary)
+        matches = params.MATCHER.match(np.float32(self.bow_descriptors), dictionary)
         for match in matches:
             # Get which visual word this descriptor matches in the dictionary
             # match.trainIdx is the visual_word

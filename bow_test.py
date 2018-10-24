@@ -42,7 +42,7 @@ def main():
 
     print("Computing descriptors...") # for each testing image
     start = cv2.getTickCount()
-    [img_data.compute_descriptors() for img_data in imgs_data]
+    [img_data.compute_bow_descriptors() for img_data in imgs_data]
     print_duration(start)
 
     print("Generating histograms...") # for each testing image
