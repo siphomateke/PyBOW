@@ -299,6 +299,15 @@ def get_bow_histograms(imgs_data):
 
 ################################################################################
 
+# return the global set of hog descriptors for the data set of images
+
+def get_hog_descriptors(imgs_data):
+
+    samples = stack_array([[img_data.hog_descriptor] for img_data in imgs_data])
+    return np.float32(samples)
+
+################################################################################
+
 # return global the set of numerical class labels for the data set of images
 
 def get_class_labels(imgs_data):
