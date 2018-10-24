@@ -103,14 +103,35 @@ class ImageData(object):
         self.img = img
         self.class_name = ""
         self.class_number = None
+
+        # use default parameters for construction of HOG
+        # examples of non-default parameter use here:
+        # https://www.programcreek.com/python/example/84776/cv2.HOGDescriptor
+
+        self.hog = cv2.HOGDescriptor(winSize=params.DATA_WINDOW_SIZE);
+        self.hog_descriptor = np.array([])
         self.bow_descriptors = np.array([])
-        self.hog_descriptors = np.array([])
+
 
     def set_class(self, class_name):
         self.class_name = class_name
         self.class_number = get_class_number(self.class_name)
         if show_additional_process_information:
             print("class name : ", class_name, " - ", self.class_number);
+
+    def compute_hog_descriptor(self):
+
+        # generate the HOG descriptors for a given image
+
+        img_hog cv2.resize(img, (params.DATA_WINDOW_SIZE[0], params.DATA_WINDOW_SIZE[1]), interpolation = cv2.INTER_AREA)
+
+        self.hog_descriptor = hog.compute(img_hog)
+
+        if self.hog_descriptor is None:
+            self.hog_descriptor = np.array([])
+
+        if show_additional_process_information:
+            print("HOG descriptor computed - dimension: ", self.hog_descriptor.shape);
 
     def compute_bow_descriptors(self):
 
