@@ -112,8 +112,6 @@ MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
 ################################################################################
 # settings for HOG approaches
 
-HOG_BIN_N = 16
-
 HOG_SVM_PATH = "svm_hog.xml"
 
 ################################################################################
