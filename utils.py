@@ -82,13 +82,6 @@ def stack_array(arr):
 
 ################################################################################
 
-# returns descriptors of an image - used in training and testing
-
-def get_descriptors(img):
-    return params.DETECTOR.detectAndCompute(img, None)[1]
-
-################################################################################
-
 # transform between class numbers (i.e. codes) - {0,1,2, ...N} and
 # names {dog,cat cow, ...} - used in training and testing
 
@@ -111,6 +104,7 @@ class ImageData(object):
         self.class_name = ""
         self.class_number = None
         self.bow_descriptors = np.array([])
+        self.hog_descriptors = np.array([])
 
     def set_class(self, class_name):
         self.class_name = class_name
@@ -122,7 +116,7 @@ class ImageData(object):
 
         # generate the feature descriptors for a given image
 
-        self.bow_descriptors = get_descriptors(self.img)
+        self.bow_descriptors = params.DETECTOR.detectAndCompute(self.img, None)[1]
 
         if self.bow_descriptors is None:
             self.bow_descriptors = np.array([])
