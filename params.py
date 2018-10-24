@@ -40,7 +40,7 @@ DATA_WINDOW_OFFSET_FOR_TRAINING_SAMPLES = 3;
 
 # number of sample patches to extract from each negative training example
 
-DATA_training_sample_count_neg = 5;
+DATA_training_sample_count_neg = 10;
 
 # number of sample patches to extract from each positive training example
 
@@ -67,7 +67,7 @@ BOW_clustering_iterations = 20; # reduce to improve speed, reduce quality
 
 BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 for variable number
 
-# specify the type of feature points to use
+# specify the type of feature points to use])
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
