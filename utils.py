@@ -1,6 +1,6 @@
 ################################################################################
 
-# functionality: utility functions for all detection algorithms
+# functionality: utility functions for BOW and HOG detection algorithms
 
 # This version: (c) 2018 Toby Breckon, Dept. Computer Science, Durham University, UK
 # License: MIT License
@@ -45,25 +45,6 @@ def format_time(time):
 def print_duration(start):
     time = get_elapsed_time(start)
     print(("Took {}".format(format_time(time))))
-
-################################################################################
-
-# re-size an image with respect to its aspect ratio if needed.
-# used in the multi-scale image pyramid approach
-
-def resize_img(img, width=-1, height=-1):
-    if height == -1 and width == -1:
-        raise TypeError("Invalid arguments. Width or height must be provided.")
-    h = img.shape[0]
-    w = img.shape[1]
-    if height == -1:
-        aspect_ratio = float(w) / h
-        new_height = int(width / aspect_ratio)
-        return cv2.resize(img, (width, new_height))
-    elif width == -1:
-        aspect_ratio = h / float(w)
-        new_width = int(height / aspect_ratio)
-        return cv2.resize(img, (new_width, height))
 
 ################################################################################
 
