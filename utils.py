@@ -123,7 +123,7 @@ class ImageData(object):
 
         # generate the HOG descriptors for a given image
 
-        img_hog cv2.resize(img, (params.DATA_WINDOW_SIZE[0], params.DATA_WINDOW_SIZE[1]), interpolation = cv2.INTER_AREA)
+        img_hog = cv2.resize(img, (params.DATA_WINDOW_SIZE[0], params.DATA_WINDOW_SIZE[1]), interpolation = cv2.INTER_AREA)
 
         self.hog_descriptor = hog.compute(img_hog)
 
