@@ -113,6 +113,8 @@ MATCHER = cv2.FlannBasedMatcher(_index_params, _search_params)
 # settings for HOG approaches
 
 HOG_SVM_PATH = "svm_hog.xml"
+
 HOG_SVM_kernel = cv2.ml.SVM_LINEAR; # see opencv manual for other options
+HOG_SVM_max_training_iterations = 500; # stop training after max iterations
 
 ################################################################################
