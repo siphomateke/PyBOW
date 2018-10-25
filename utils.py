@@ -108,7 +108,7 @@ class ImageData(object):
         # examples of non-default parameter use here:
         # https://www.programcreek.com/python/example/84776/cv2.HOGDescriptor
 
-        self.hog = cv2.HOGDescriptor(winSize=params.DATA_WINDOW_SIZE);
+        self.hog = cv2.HOGDescriptor(); # default is 64 x 128
         self.hog_descriptor = np.array([])
         self.bow_descriptors = np.array([])
 
@@ -123,9 +123,9 @@ class ImageData(object):
 
         # generate the HOG descriptors for a given image
 
-        img_hog = cv2.resize(img, (params.DATA_WINDOW_SIZE[0], params.DATA_WINDOW_SIZE[1]), interpolation = cv2.INTER_AREA)
+        img_hog = cv2.resize(self.img, (params.DATA_WINDOW_SIZE[0], params.DATA_WINDOW_SIZE[1]), interpolation = cv2.INTER_AREA)
 
-        self.hog_descriptor = hog.compute(img_hog)
+        self.hog_descriptor = self.hog.compute(img_hog)
 
         if self.hog_descriptor is None:
             self.hog_descriptor = np.array([])
