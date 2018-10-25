@@ -19,16 +19,16 @@ import random
 ################################################################################
 # global flags to facilitate output of additional info per stage/function
 
-show_additional_process_information = True;
+show_additional_process_information = False;
 show_images_as_they_are_loaded = True;
 show_images_as_they_are_sampled = True;
 
 ################################################################################
 
 # timing information - for training
+# - helper function for timing code execution
 
 def get_elapsed_time(start):
-    """ Helper function for timing code execution"""
     return (cv2.getTickCount() - start) / cv2.getTickFrequency()
 
 
