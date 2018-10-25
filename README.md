@@ -19,18 +19,17 @@ To ensure you have your [OpenCV](http://www.opencv.org) setup correctly to use t
 
 You are provided with a set of 7 example files that can be run individually as follows:
 
+- ```hog_training.py``` - performs object detection batch training using Histogram of Oriented Gradients (HOG) and SVM classification.
+
+- ```hog_testing.py```  - performs object detection batch testing using Histogram of Oriented Gradients (HOG) and SVM classification.
+
+- ```hog_detector.py``` - performs object detection via sliding window search using Histogram of Oriented Gradients (HOG) and SVM classification over a directory of specified images.
+
 - ```bow_training.py``` - performs object detection batch training using a bag of visual words (BoW) approach and SVM classification.
 
 - ```bow_testing.py``` - performs object detection batch testing using a bag of visual words (BoW) approach and SVM classification.
 
 - ```bow_detector.py``` - performs object detection via sliding window search using a bag of visual words (BoW) approach and SVM classification over a directory of specified images.
-
-
-- ** Still TODO ** ```hog_training.py``` - performs object detection batch training using Histogram of Oriented Gradients (HOG) and SVM classification.
-
-- ** Still TODO ** ```hog_testing.py```  - performs object detection batch testing using Histogram of Oriented Gradients (HOG) and SVM classification.
-
-- ** Still TODO ** ```hog_detector.py``` - performs object detection via sliding window search using Histogram of Oriented Gradients (HOG) and SVM classification over a directory of specified images.
 
 - ```selective_search.py``` - performs selective search to generate object windows as an alternative to sliding window search (generates windows only, does not perform integrated object detection).
 
@@ -49,6 +48,11 @@ In order to perform training you will need to first download the dataset, which 
 ```
 sh ./download-data.sh
 ```
+If you run into errors such as _"libpng error: IDAT: invalid distance too far back"_ when running the commands below you may need to also run:
+```
+sh ./fix-pngs.sh
+```
+[Durham Students - just download the data sets from the [DUO](http://duo.dur.ac.uk) to avoid this.]
 
 To perform training of the bag of works approach you can simply run as follows (or alternatively how you run python scripts in your environment):
 ```
