@@ -1,6 +1,6 @@
-# Python Bag of (Visual) Words (BoVW) and Histogram of Oriented Gradient (HOG) based Object Detection
+# Python Bag of (Visual) Words (BoW) and Histogram of Oriented Gradient (HOG) based Object Detection
 
-An exemplar python implementation of the Bag of Visual Words and Histogram of Oriented Gradient (HOG) feature based object detection (BoW or HOG features, SVM classification) using [OpenCV](http://www.opencv.org).
+An exemplar python implementation of the Bag of (Visual) Words and Histogram of Oriented Gradient (HOG) feature based object detection (BoW or HOG features, SVM classification) using [OpenCV](http://www.opencv.org).
 
 Examples used for teaching within the undergraduate Computer Science programme
 at [Durham University](http://www.durham.ac.uk) (UK) by [Prof. Toby Breckon](http://community.dur.ac.uk/toby.breckon/).
