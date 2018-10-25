@@ -44,7 +44,7 @@ Download each file as needed (or download/uncompress a zip from [here](https://g
 git clone https://github.com/tobybreckon/python-bow-hog-object-detection
 cd python-bow-hog-object-detection
 ```
-In order to perform training you will need to first download the dataset, which can be achieved as follows on a linux/unix based system (or can alteratively be downloaded from [here](ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar):
+In order to perform training you will need to first download the dataset, which can be achieved as follows on a linux/unix based system (or can alteratively be downloaded from [here](ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar) - ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar
 ```
 sh ./download-data.sh
 ```
