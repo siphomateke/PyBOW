@@ -19,7 +19,7 @@ from utils import *
 
 def main():
 
-    # load up the dictbreak;ionary and SVM stored from prior training
+    # load up the dictionary and SVM stored from prior training
 
     try:
         dictionary = np.load(params.BOW_DICT_PATH)
