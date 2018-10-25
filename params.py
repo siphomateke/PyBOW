@@ -71,7 +71,7 @@ BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 fo
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
-BOW_use_ORB_always = True; # set to True to always use ORB over SIFT where available
+BOW_use_ORB_always = False; # set to True to always use ORB over SIFT where available
 
 try:
 
@@ -108,7 +108,7 @@ except:
 
     if (not(BOW_use_ORB_always)):
         print("Falling back to using features: ", DETECTOR.__class__())
-        BOW_use_ORB_always = True; # set this as a flag we can check later which data type to use
+        BOW_use_ORB_always = True; # set this as a flag we can check later which data type to uses
 
 print("For BOW - features in use are: ", DETECTOR.__class__(), "(ignore for HOG)")
 
