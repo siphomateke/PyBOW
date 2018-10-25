@@ -131,14 +131,12 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
                             rect = np.float32([x, y, x + window_size[0], y + window_size[1]])
 
-                            print("************************************************* detected with SVM")
-                            cv2.waitKey(40)
-
                             # if we want to see progress show each detection, at each scale
 
                             if (show_scan_window_process):
                                 cv2.rectangle(rect_img, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
                                 cv2.imshow('current scale',rect_img)
+                                cv2.waitKey(10)
 
                             rect *= (1.0 / current_scale)
                             detections.append(rect)
@@ -156,7 +154,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
             cv2.rectangle(output_img, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
 
         cv2.imshow('detected objects',output_img)
-        key = cv2.waitKey(200) # wait 200ms
+        key = cv2.waitKey(40) # wait 40ms
         if (key == ord('x')):
             break
 
