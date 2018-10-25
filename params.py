@@ -71,26 +71,33 @@ BOW_fixed_feature_per_image_to_use = 100; # reduce to improve speed, set to 0 fo
 # -- refer to the OpenCV manual for options here, by default this is set to work on
 # --- all systems "out of the box" rather than using the best available option
 
+BOW_use_ORB_always = True; # set to True to always use ORB over SIFT where available
+
 try:
 
-    DETECTOR = cv2.xfeatures2d.SIFT_create(nfeatures=BOW_fixed_feature_per_image_to_use) # -- requires extra modules and non-free build flag
-    # DETECTOR = cv2.xfeatures2d.SURF_create() # -- requires extra modules and non-free build flag
+    if BOW_use_ORB_always:
+        print("Forced used of ORB features, not SIFT")
+        raise Exception('force use of ORB')
 
-    print("For BOW - features in use are: ", DETECTOR.__class__(), "(ignore for HOG)")
+    DETECTOR = cv2.xfeatures2d.SIFT_create(nfeatures=BOW_fixed_feature_per_image_to_use) # -- requires extra modules and non-free build flag
+    # DETECTOR = cv2.xfeatures2d.SURF_create(nfeatures=BOW_fixed_feature_per_image_to_use) # -- requires extra modules and non-free build flag
+
+    # as SIFT/SURF feature descriptors are floating point use KD_TREE approach
 
     _algorithm = 0 # FLANN_INDEX_KDTREE
     _index_params = dict(algorithm=_algorithm, trees=5)
     _search_params = dict(checks=50)
 
 except:
-    # DETECTOR = cv2.AKAZE_create()
-    # DETECTOR = cv2.KAZE_create()
-    DETECTOR = cv2.ORB_create(nfeatures=BOW_fixed_feature_per_image_to_use, scoreType=cv2.ORB_FAST_SCORE) # check these params
+
+    DETECTOR = cv2.ORB_create(nfeatures=BOW_fixed_feature_per_image_to_use) # check these params
 
     #if using ORB points
     # taken from: https://docs.opencv.org/3.3.0/dc/dc3/tutorial_py_matcher.html
     # N.B. "commented values are recommended as per the docs,
     # but it didn't provide required results in some cases"
+
+    # as SIFT/SURF feature descriptors are integer use HASHING approach
 
     _algorithm = 6 # FLANN_INDEX_LSH
     _index_params= dict(algorithm = _algorithm,
@@ -99,11 +106,11 @@ except:
                         multi_probe_level = 1) #2
     _search_params = dict(checks=50)
 
+    if (not(BOW_use_ORB_always)):
+        print("Falling back to using features: ", DETECTOR.__class__())
+        BOW_use_ORB_always = True; # set this as a flag we can check later which data type to use
 
-    # SAPIENT ORB uses:
-    # extractor = ORB::create(500, 1.2f, 8, 5, 0, 2, ORB::HARRIS_SCORE, 5, 20);
-
-    print("Falling back to using features: ", DETECTOR.__class__())
+print("For BOW - features in use are: ", DETECTOR.__class__(), "(ignore for HOG)")
 
 # based on choice and availability of feature points, set up KD-tree matcher
 
