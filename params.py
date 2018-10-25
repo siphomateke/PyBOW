@@ -76,7 +76,7 @@ try:
     DETECTOR = cv2.xfeatures2d.SIFT_create(nfeatures=BOW_fixed_feature_per_image_to_use) # -- requires extra modules and non-free build flag
     # DETECTOR = cv2.xfeatures2d.SURF_create() # -- requires extra modules and non-free build flag
 
-    print("Features in use: ", DETECTOR.__class__())
+    print("For BOW - features in use are: ", DETECTOR.__class__())
 
     _algorithm = 0 # FLANN_INDEX_KDTREE
     _index_params = dict(algorithm=_algorithm, trees=5)
