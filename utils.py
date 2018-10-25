@@ -150,8 +150,13 @@ class ImageData(object):
 
         # generate the bow histogram of feature occurance from descriptors
 
-        # FLANN matcher needs descriptors to be type32
-        matches = params.MATCHER.match(np.float32(self.bow_descriptors), dictionary)
+        if (params.BOW_use_ORB_always):
+            # FLANN matcher with ORB needs dictionary to be uint8
+            matches = params.MATCHER.match(self.bow_descriptors, np.uint8(dictionary));
+        else:
+            # FLANN matcher with SIFT/SURF needs descriptors to be type32
+            matches = params.MATCHER.match(np.float32(self.bow_descriptors), dictionary)
+
         for match in matches:
             # Get which visual word this descriptor matches in the dictionary
             # match.trainIdx is the visual_word
