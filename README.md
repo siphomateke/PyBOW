@@ -76,6 +76,18 @@ The above instructions can be repeated for the set of ```hog_...py``` examples t
 
 ----
 
+### References
+
+This code base was informed by the research work carried out in the following publications:
+
+- [On using Feature Descriptors as Visual Words for Object Detection within X-ray Baggage Security Screening](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski16xray.pdf) (M.E. Kundegorski, S. Akcay, M. Devereux, A. Mouton, T.P. Breckon), In Proc. International Conference on Imaging for Crime Detection and Prevention, IET, pp. 12 (6 .)-12 (6 .)(1), 2016. [[pdf](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski16xray.pdf)] [[doi](http://dx.doi.org/10.1049/ic.2016.0080)]
+
+- [Real-time Classification of Vehicle Types within Infra-red Imagery](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski16vehicle.pdf) (M.E. Kundegorski, S. Akcay, G. Payen de La Garanderie, T.P. Breckon), In Proc. SPIE Optics and Photonics for Counterterrorism, Crime Fighting and Defence, SPIE, Volume 9995, pp. 1-16, 2016. [[pdf](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski16vehicle.pdf)] [[doi](http://dx.doi.org/10.1117/12.2241106)]
+
+- [A Photogrammetric Approach for Real-time 3D Localization and Tracking of Pedestrians in Monocular Infrared Imagery](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski14photogrammetric.pdf) (M.E. Kundegorski, T.P. Breckon], In Proc. SPIE Optics and Photonics for Counterterrorism, Crime Fighting and Defence, SPIE, Volume 9253, No. 01, pp. 1-16, 2014. [[pdf](http://community.dur.ac.uk/toby.breckon/publications/papers/kundegorski14photogrammetric.pdf)] [[doi](http://dx.doi.org/10.1117/12.2065673)]
+
+----
+
 **Acknowledgements:** originally forked from the version at https://github.com/nextgensparx/PyBOW
 
 _[ but it appears some code portions may have broader origins elsewhere, such as from this tutorial - https://www.pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/]_
