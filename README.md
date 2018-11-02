@@ -88,9 +88,9 @@ This code base was informed by the research work carried out in the following pu
 
 ----
 
-**Acknowledgements:** originally forked from the version at https://github.com/nextgensparx/PyBOW
+**Acknowledgements:** originally forked from an earlier Bag of Visual Words only version at https://github.com/nextgensparx/PyBOW with the additional HOG and selective search code added to this newer version.
 
-_[ but it appears some code portions may have broader origins elsewhere, such as from this tutorial - https://www.pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/]_
+_[ but it appears some code portions may have broader origins elsewhere, such as from this tutorial - https://www.pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/ ]_
 
 **Bugs:** _I do not claim this code to be bug free._ If you find any bugs raise an issue (or much better still submit a git pull request with a fix) - toby.breckon@durham.ac.uk
 
