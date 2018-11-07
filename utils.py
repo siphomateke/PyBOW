@@ -19,7 +19,7 @@ import random
 ################################################################################
 # global flags to facilitate output of additional info per stage/function
 
-show_additional_process_information = False;
+show_additional_process_information = True;
 show_images_as_they_are_loaded = True;
 show_images_as_they_are_sampled = True;
 
@@ -57,12 +57,21 @@ def read_all_images(path):
     images_path = [os.path.join(path, f) for f in os.listdir(path)]
     images = []
     for image_path in images_path:
-        img = cv2.imread(image_path)
 
-        if show_additional_process_information:
-            print("loading file - ", image_path);
+        # add in a check to skip non jpg or png (lower case) named files
+        # as some OS (Mac OS!) helpfully creates a Thumbs.db or similar
+        # when you browse image folders - which then are not images when
+        # we try to load them
 
-        images.append(img)
+        if (('.png' in image_path) or ('.jpg' in image_path)):
+            img = cv2.imread(image_path)
+            images.append(img)
+            if show_additional_process_information:
+                print("loading file - ", image_path);
+        else:
+            if show_additional_process_information:
+                print("skipping non PNG/JPG file - ", image_path);
+
     return images
 
 ################################################################################
