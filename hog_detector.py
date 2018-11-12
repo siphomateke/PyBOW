@@ -20,7 +20,7 @@ from sliding_window import *
 
 ################################################################################
 
-directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/";
+directory_to_cycle = "pedestrian/INRIAPerson/Test/pos/";
 
 show_scan_window_process = True;
 
@@ -122,7 +122,7 @@ for filename in sorted(os.listdir(directory_to_cycle)):
 
                         # if we get a detection, then record it
 
-                        if result[0] == params.DATA_CLASS_NAMES["pedestrain"]:
+                        if result[0] == params.DATA_CLASS_NAMES["pedestrian"]:
 
                             # store rect as (x1, y1) (x2,y2) pair
 

@@ -15,7 +15,7 @@ import os
 ################################################################################
 # settings for datsets in general
 
-master_path_to_dataset = "/tmp/pedestrain"; # ** need to edit this **
+master_path_to_dataset = "/tmp/pedestrian"; # ** need to edit this **
 
 # data location - training examples
 
@@ -50,7 +50,7 @@ DATA_training_sample_count_pos = 5;
 
 DATA_CLASS_NAMES = {
     "other": 0,
-    "pedestrain": 1
+    "pedestrian": 1
 }
 
 ################################################################################

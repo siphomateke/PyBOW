@@ -27,7 +27,7 @@ cv2.setNumThreads(4);
 
 #####################################################################
 
-directory_to_cycle = "pedestrain/INRIAPerson/Test/pos/" # edit this
+directory_to_cycle = "pedestrian/INRIAPerson/Test/pos/" # edit this
 
 #####################################################################
 

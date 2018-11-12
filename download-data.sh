@@ -22,13 +22,13 @@ STARTING_DIR=`pwd`
 
 ################################################################################
 
-## INRIA Pedestrain Dataset
+## INRIA Pedestrian Dataset
 
 ################################################################################
 
 URL_PERSON=ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar
 
-DIR_LOCAL_TARGET_PERSON=/tmp/pedestrain
+DIR_LOCAL_TARGET_PERSON=/tmp/pedestrian
 
 PERSON_FILE_NAME=INRIAPerson.tar
 
@@ -39,7 +39,7 @@ PERSON_MD5_SUM=6af009c6386c86f78f77e81003df84dc
 
 # perform download
 
-echo "Downloading pedestrain data set models..."
+echo "Downloading pedestrian data set models..."
 
 mkdir -p $DIR_LOCAL_TARGET_PERSON
 
@@ -67,7 +67,7 @@ chmod -R +w $DIR_LOCAL_TARGET_PERSON
 
 echo "Tidying up..."
 
-ln -s $DIR_LOCAL_TARGET_PERSON $STARTING_DIR/pedestrain
+ln -s $DIR_LOCAL_TARGET_PERSON $STARTING_DIR/pedestrian
 
 # mv $DIR_NAME_UNPACKED/* .
 
@@ -75,7 +75,7 @@ rm $TARGET # && rm -r $DIR_NAME_UNPACKED
 
 ################################################################################
 
-echo "... completed -> required pedestrain data in $DIR_LOCAL_TARGET_PERSON/"
+echo "... completed -> required pedestrian data in $DIR_LOCAL_TARGET_PERSON/"
 
 ################################################################################
 
